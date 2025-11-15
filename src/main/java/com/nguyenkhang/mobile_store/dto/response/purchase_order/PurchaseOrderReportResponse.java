@@ -1,9 +1,9 @@
 package com.nguyenkhang.mobile_store.dto.response.purchase_order;
 
+import java.math.BigDecimal;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter

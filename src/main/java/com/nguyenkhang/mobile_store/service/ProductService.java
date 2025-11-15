@@ -1,5 +1,21 @@
 package com.nguyenkhang.mobile_store.service;
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import jakarta.persistence.EntityManager;
+import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nguyenkhang.mobile_store.dto.request.products.ProductAndVariantsCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductRequest;
 import com.nguyenkhang.mobile_store.dto.response.UploadFileCloudinaryResponse;
@@ -14,25 +30,11 @@ import com.nguyenkhang.mobile_store.mapper.ProductMapper;
 import com.nguyenkhang.mobile_store.mapper.ProductVariantMapper;
 import com.nguyenkhang.mobile_store.repository.*;
 import com.nguyenkhang.mobile_store.utils.VariantUtils;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -53,10 +55,18 @@ public class ProductService {
     String CLOUDINARY_FOLDER = "products";
     String VARIANT_IMAGE_FOLDER = CLOUDINARY_FOLDER + "/variants";
 
+    EntityManager entityManager;
+
+
     @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public ProductResponse createProductAndVariants(ProductAndVariantsCreationRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        Brand brand = brandRepository.findById(request.getBrandId()).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+        Category category = categoryRepository
+                .findById(request.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Brand brand = brandRepository
+                .findById(request.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
         User userCreate = userService.getCurrentUser();
 
         var product = productMapper.toProduct(request);
@@ -64,22 +74,25 @@ public class ProductService {
         product.setBrand(brand);
         product.setCreateBy(userCreate);
 
-        UploadFileCloudinaryResponse mainImageLink = cloudinaryService.safeUpload(request.getMainImageFile(), CLOUDINARY_FOLDER, ErrorCode.IMAGE_UPLOAD_FAIL);
+        UploadFileCloudinaryResponse mainImageLink = cloudinaryService.safeUpload(
+                request.getMainImageFile(), CLOUDINARY_FOLDER, ErrorCode.IMAGE_UPLOAD_FAIL);
 
         product.setMainImageUrl(mainImageLink.getPublicUrl());
         product.setImagePublicId(mainImageLink.getPublicId());
 
+        Set<Long> optionValueIds = request.getVariants().stream()
+                .flatMap((variant) -> variant.getOptionValues().stream())
+                .collect(Collectors.toSet());
 
-        Set<Long> optionValueIds = request.getVariants().stream().flatMap(
-                (variant) -> variant.getOptionValues().stream()
-        ).collect(Collectors.toSet());
-
-        Map<Long,OptionValue> optionValueMap = optionValueRepository.findAllById(optionValueIds).stream().collect(Collectors.toMap(OptionValue::getId, Function.identity()));
+        Map<Long, OptionValue> optionValueMap = optionValueRepository.findAllById(optionValueIds).stream()
+                .collect(Collectors.toMap(OptionValue::getId, Function.identity()));
 
         List<ProductVariant> variants = new ArrayList<>();
 
         for (var variantRequest : request.getVariants()) {
-            Set<OptionValue> optionValues = variantRequest.getOptionValues().stream().map(optionValueMap::get).collect(Collectors.toSet());
+            Set<OptionValue> optionValues = variantRequest.getOptionValues().stream()
+                    .map(optionValueMap::get)
+                    .collect(Collectors.toSet());
 
             if (optionValues.size() != variantRequest.getOptionValues().size()) {
                 throw new AppException(ErrorCode.OPTION_VALUE_NOT_EXISTED);
@@ -90,7 +103,8 @@ public class ProductService {
             productVariant.setCreateBy(userCreate);
             productVariant.setSignature(VariantUtils.createVariantSignature(optionValues));
 
-            UploadFileCloudinaryResponse imageLink = cloudinaryService.safeUpload(variantRequest.getImageFile(), VARIANT_IMAGE_FOLDER, ErrorCode.IMAGE_UPLOAD_FAIL);
+            UploadFileCloudinaryResponse imageLink = cloudinaryService.safeUpload(
+                    variantRequest.getImageFile(), VARIANT_IMAGE_FOLDER, ErrorCode.IMAGE_UPLOAD_FAIL);
 
             productVariant.setProductVariantImageUrl(imageLink.getPublicUrl());
             productVariant.setImagePublicId(imageLink.getPublicId());
@@ -105,23 +119,30 @@ public class ProductService {
         }
         product = productRepository.save(product);
 
-
-
         return productMapper.toProductResponse(product);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public ProductResponse getById(long id) {
 
-        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product =
+                productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
         return productMapper.toProductResponse(product);
     }
 
     @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public ProductResponse update(long productId, ProductRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        Brand brand = brandRepository.findById(request.getBrandId()).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
-        Product product = productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Category category = categoryRepository
+                .findById(request.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Brand brand = brandRepository
+                .findById(request.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+        Product product = productRepository
+                .findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
         User userUpdate = userService.getCurrentUser();
 
@@ -130,12 +151,12 @@ public class ProductService {
         product.setCategory(category);
         product.setUpdateBy(userUpdate);
 
-
-        if ( request.getMainImageFile()!=null && !request.getMainImageFile().isEmpty()) {
+        if (request.getMainImageFile() != null && !request.getMainImageFile().isEmpty()) {
 
             cloudinaryService.safeDelete(product.getImagePublicId(), CLOUDINARY_FOLDER, ErrorCode.IMAGE_DELETE_FAIL);
 
-            UploadFileCloudinaryResponse mainImageLink = cloudinaryService.safeUpload(request.getMainImageFile(), CLOUDINARY_FOLDER, ErrorCode.IMAGE_UPLOAD_FAIL);
+            UploadFileCloudinaryResponse mainImageLink = cloudinaryService.safeUpload(
+                    request.getMainImageFile(), CLOUDINARY_FOLDER, ErrorCode.IMAGE_UPLOAD_FAIL);
 
             product.setMainImageUrl(mainImageLink.getPublicUrl());
             product.setImagePublicId(mainImageLink.getPublicId());
@@ -146,7 +167,8 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
-    public Page<SimpleProductResponseForCustomer> getProductsByCategory(long categoryId, int page, int size, String sortBy) {
+    public Page<SimpleProductResponseForCustomer> getProductsByCategory(
+            long categoryId, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
         var products = productRepository.findAllByCategoryId(categoryId, pageable);
@@ -162,7 +184,7 @@ public class ProductService {
         return products.map(productMapper::toSimpleProductResponseForCustomer);
     }
 
-
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public Page<SimpleProductResponse> getProducts(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
@@ -181,23 +203,35 @@ public class ProductService {
 
     public ProductResponseForCustomer getByIdForUser(long id) {
 
-        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product =
+                productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
         return productMapper.toProductResponseForCustomer(product);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ConstraintViolationException.class)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product = productRepository
+                .findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
         var mainImageId = product.getImagePublicId();
-        List<String> variantImageIds = product.getProductVariants().stream().map(ProductVariant::getImagePublicId).toList();
+        List<String> variantImageIds = product.getProductVariants().stream()
+                .map(ProductVariant::getImagePublicId)
+                .toList();
 
-        productRepository.delete(product);
+        try{
+            productRepository.delete(product);
+            entityManager.flush();
+        }catch (ConstraintViolationException exception){
+            throw new AppException(ErrorCode.PRODUCT_CAN_NOT_DELETE);
+        }
 
         for (var id : variantImageIds) {
             cloudinaryService.safeDelete(id, VARIANT_IMAGE_FOLDER, ErrorCode.IMAGE_DELETE_FAIL);
         }
+
         cloudinaryService.safeDelete(mainImageId, CLOUDINARY_FOLDER, ErrorCode.IMAGE_DELETE_FAIL);
     }
 }

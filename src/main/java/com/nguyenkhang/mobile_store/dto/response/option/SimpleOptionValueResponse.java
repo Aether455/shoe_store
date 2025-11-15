@@ -14,6 +14,4 @@ public class SimpleOptionValueResponse {
     Long id;
 
     String value;
-
-
 }

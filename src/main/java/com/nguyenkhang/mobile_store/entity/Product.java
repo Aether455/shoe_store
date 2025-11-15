@@ -1,14 +1,15 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -31,12 +32,11 @@ public class Product {
 
     @Column(columnDefinition = "TEXT")
     String mainImageUrl;
+
     String imagePublicId;
 
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ProductVariant> productVariants;
-
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -49,6 +49,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "create_by")
     User createBy;
+
     @ManyToOne
     @JoinColumn(name = "update_by")
     User updateBy;
@@ -59,4 +60,3 @@ public class Product {
     @UpdateTimestamp
     LocalDateTime updateAt;
 }
-

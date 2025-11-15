@@ -1,14 +1,17 @@
 package com.nguyenkhang.mobile_store.entity;
 
-import com.nguyenkhang.mobile_store.enums.VoucherStatus;
-import com.nguyenkhang.mobile_store.enums.VoucherType;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import com.nguyenkhang.mobile_store.enums.VoucherStatus;
+import com.nguyenkhang.mobile_store.enums.VoucherType;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -24,7 +27,6 @@ public class Voucher {
     Long id;
 
     String name;
-
 
     @Column(unique = true)
     String voucherCode;
@@ -46,15 +48,14 @@ public class Voucher {
     @ManyToOne
     @JoinColumn(name = "create_by_user_id")
     User createBy;
+
     @ManyToOne
     @JoinColumn(name = "update_by_user_id")
     User updateBy;
 
     @CreationTimestamp
     LocalDateTime createAt;
+
     @UpdateTimestamp
     LocalDateTime updateAt;
-
-
-
 }

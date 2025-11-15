@@ -1,6 +1,7 @@
 package com.nguyenkhang.mobile_store.dto.request.order;
 
 import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class OrderItemRequest {
     @NotNull(message = "PRODUCT_REQUIRED")
     Long productId;
+
     @NotNull(message = "PRODUCT_VARIANT_REQUIRED")
     Long productVariantId;
 

@@ -1,12 +1,13 @@
 package com.nguyenkhang.mobile_store.dto.request;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 import java.util.List;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -18,7 +19,6 @@ public class PurchaseOrderRequest {
 
     @NotNull(message = "SUPPLIER_REQUIRED")
     Long supplierId;
-
 
     @NotNull(message = "WAREHOUSE_REQUIRED")
     Long warehouseId;

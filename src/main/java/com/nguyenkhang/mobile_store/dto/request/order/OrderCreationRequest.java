@@ -1,11 +1,12 @@
 package com.nguyenkhang.mobile_store.dto.request.order;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class OrderCreationRequest {
     long customerId;
 
     @NotBlank(message = "PHONE_NUMBER_REQUIRED")
-    @Pattern(regexp =  "^(0|\\+84)(\\d{9})$",message = "INVALID_PHONE_NUMBER")
+    @Pattern(regexp = "^(0|\\+84)(\\d{9})$", message = "INVALID_PHONE_NUMBER")
     String phoneNumber;
 
     String note;
@@ -44,5 +45,4 @@ public class OrderCreationRequest {
     PaymentRequest payment;
     List<OrderItemRequest> orderItems;
     double totalAmount;
-
 }

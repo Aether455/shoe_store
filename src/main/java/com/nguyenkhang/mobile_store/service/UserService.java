@@ -1,5 +1,23 @@
 package com.nguyenkhang.mobile_store.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import jakarta.persistence.EntityManager;
+
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nguyenkhang.mobile_store.dto.request.user.UserCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.user.UserCreationRequestForCustomer;
 import com.nguyenkhang.mobile_store.dto.request.user.UserCreationRequestForStaff;
@@ -17,23 +35,11 @@ import com.nguyenkhang.mobile_store.mapper.UserMapper;
 import com.nguyenkhang.mobile_store.repository.RoleRepository;
 import com.nguyenkhang.mobile_store.repository.UserRepository;
 import com.nguyenkhang.mobile_store.specification.UserSpecification;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -45,6 +51,9 @@ public class UserService {
     RoleRepository roleRepository;
     UserMapper userMapper;
 
+    EntityManager entityManager;
+
+    @Transactional
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
@@ -63,9 +72,8 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-
     @Transactional
-    public UserResponseForCustomer createUserForCustomer(UserCreationRequestForCustomer request){
+    public UserResponseForCustomer createUserForCustomer(UserCreationRequestForCustomer request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
@@ -92,10 +100,11 @@ public class UserService {
         }
 
         return userMapper.toUserResponseForCustomer(user);
-
     }
 
-    public UserResponseForStaff createUserForStaff(UserCreationRequestForStaff request){
+    @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public UserResponseForStaff createUserForStaff(UserCreationRequestForStaff request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
@@ -125,18 +134,23 @@ public class UserService {
         return userMapper.toUserResponseForStaff(user);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserResponse> getUsers() {
         return userRepository.findAll().stream().map(userMapper::toUserResponse).collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserResponse getUserById(long id) {
-        return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        return userMapper.toUserResponse(
+                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserResponse updateUser(long userId, UserUpdateRequest userUpdateRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if (!Objects.equals(userUpdateRequest.getEmail(), user.getEmail()) && userRepository.existsByEmail(userUpdateRequest.getEmail())) {
+        if (!Objects.equals(userUpdateRequest.getEmail(), user.getEmail())
+                && userRepository.existsByEmail(userUpdateRequest.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
@@ -147,23 +161,33 @@ public class UserService {
         var roles = roleRepository.findAllById(userUpdateRequest.getRoles());
         user.setRoles(new HashSet<>(roles));
 
-         user = userRepository.save(user);
+        user = userRepository.save(user);
 
         return userMapper.toUserResponse(user);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Transactional(noRollbackFor = ConstraintViolationException.class)
     public void deleteUser(long userId) {
-        userRepository.deleteById(userId);
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        userRepository.delete(user);
+        try {
+            entityManager.flush();
+        } catch (ConstraintViolationException e) {
+            throw new AppException(ErrorCode.USER_CAN_NOT_DELETE);
+        }
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 
-    public Page<UserResponse> searchUser(String keyword, int page){
+    public Page<UserResponse> searchUser(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 20);
-        return userRepository.findAll(UserSpecification.createSpecification(keyword), pageable).map(userMapper::toUserResponse);
+        return userRepository
+                .findAll(UserSpecification.createSpecification(keyword), pageable)
+                .map(userMapper::toUserResponse);
     }
-
 }

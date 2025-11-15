@@ -1,10 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.response.category;
 
+import java.time.LocalDate;
+
 import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @Builder

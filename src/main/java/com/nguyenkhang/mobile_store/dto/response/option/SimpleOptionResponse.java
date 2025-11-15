@@ -1,9 +1,9 @@
 package com.nguyenkhang.mobile_store.dto.response.option;
 
+import java.util.List;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +17,4 @@ public class SimpleOptionResponse {
     String name;
 
     List<SimpleOptionValueResponse> optionValues;
-
-
 }

@@ -1,11 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.request;
 
-import com.nguyenkhang.mobile_store.entity.User;
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,8 +19,11 @@ public class StaffRequest {
     Long userId;
 
     @NotBlank(message = "PHONE_NUMBER_REQUIRED")
-    @Pattern(regexp = "^(0|\\+84)(\\d{9})$",message = "INVALID_PHONE_NUMBER")
+    @Pattern(regexp = "^(0|\\+84)(\\d{9})$", message = "INVALID_PHONE_NUMBER")
     String phoneNumber;
+
+    @NotBlank(message = "FULL_NAME_REQUIRED")
+    String fullName;
 
     @NotNull(message = "POSITION_NOT_EMPTY")
     String position;
@@ -31,5 +34,4 @@ public class StaffRequest {
 
     @Positive(message = "SALARY_INVALID")
     double salary;
-
 }

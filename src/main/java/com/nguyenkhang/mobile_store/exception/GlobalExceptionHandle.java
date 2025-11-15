@@ -1,23 +1,26 @@
 package com.nguyenkhang.mobile_store.exception;
 
+import java.util.Map;
+import java.util.Objects;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
 import jakarta.validation.ConstraintViolation;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.Map;
-import java.util.Objects;
+import com.nguyenkhang.mobile_store.dto.ApiResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandle {
 
     private static final String MIN_ATTRIBUTE = "min";
-
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingException(Exception exception) {
@@ -32,7 +35,6 @@ public class GlobalExceptionHandle {
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
-
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
@@ -44,10 +46,8 @@ public class GlobalExceptionHandle {
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
-
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
-
 
         String enumKey = exception.getFieldError().getDefaultMessage();
 
@@ -57,22 +57,45 @@ public class GlobalExceptionHandle {
 
             errorCode = ErrorCode.valueOf(enumKey);
 
-            ConstraintViolation constraintViolation = exception.getBindingResult().getFieldErrors().getFirst().unwrap(ConstraintViolation.class);
+            ConstraintViolation constraintViolation =
+                    exception.getBindingResult().getFieldErrors().getFirst().unwrap(ConstraintViolation.class);
 
             attributes = constraintViolation.getConstraintDescriptor().getAttributes();
             log.info(attributes.toString());
         } catch (IllegalArgumentException ignored) {
             errorCode = ErrorCode.INVALID_KEY;
-
         }
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(Objects.nonNull(attributes) ? mapAttribute(errorCode.getMessage(), attributes) : errorCode.getMessage());
+        apiResponse.setMessage(
+                Objects.nonNull(attributes)
+                        ? mapAttribute(errorCode.getMessage(), attributes)
+                        : errorCode.getMessage());
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
+    @ExceptionHandler(value = AuthorizationDeniedException.class)
+    ResponseEntity<ApiResponse> handlingAuthorizationDeniedException(AuthorizationDeniedException exception) {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+
+        return ResponseEntity.status(errorCode.getStatusCode())
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(value = NoResourceFoundException.class)
+    ResponseEntity<ApiResponse> handingNoResourceFoundException(NoResourceFoundException exception) {
+        ErrorCode errorCode = ErrorCode.NOT_FOUND_API_PATH;
+        return ResponseEntity.status(errorCode.getStatusCode())
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
         String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));

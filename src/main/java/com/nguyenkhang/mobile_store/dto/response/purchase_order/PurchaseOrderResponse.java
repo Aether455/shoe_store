@@ -1,14 +1,15 @@
 package com.nguyenkhang.mobile_store.dto.response.purchase_order;
 
-import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
-import com.nguyenkhang.mobile_store.dto.response.SupplierResponse;
-import com.nguyenkhang.mobile_store.dto.response.WarehouseResponse;
-import com.nguyenkhang.mobile_store.enums.PurchaseOrderStatus;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.nguyenkhang.mobile_store.dto.response.SupplierResponse;
+import com.nguyenkhang.mobile_store.dto.response.WarehouseResponse;
+import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
+import com.nguyenkhang.mobile_store.enums.PurchaseOrderStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -29,7 +30,6 @@ public class PurchaseOrderResponse {
     PurchaseOrderStatus status;
 
     double totalAmount;
-
 
     SimpleUserResponse createBy;
 

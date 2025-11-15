@@ -1,14 +1,14 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -24,13 +24,13 @@ public class Staff {
     Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id",unique = true)
+    @JoinColumn(name = "user_id", unique = true)
     User user;
 
     @Column(nullable = false)
     String fullName;
 
-    @Column(columnDefinition = "VARCHAR(10)",unique = true)
+    @Column(columnDefinition = "VARCHAR(10)", unique = true)
     String phoneNumber;
 
     String position;
@@ -42,6 +42,7 @@ public class Staff {
     @ManyToOne
     @JoinColumn(name = "create_by_user_id")
     User createBy;
+
     @ManyToOne
     @JoinColumn(name = "update_by_user_id")
     User updateBy;
@@ -51,5 +52,4 @@ public class Staff {
 
     @UpdateTimestamp
     LocalDateTime updateAt;
-
 }

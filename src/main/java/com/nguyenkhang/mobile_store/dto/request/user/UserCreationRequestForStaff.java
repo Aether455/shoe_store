@@ -1,27 +1,25 @@
 package com.nguyenkhang.mobile_store.dto.request.user;
 
-import com.nguyenkhang.mobile_store.dto.request.CustomerCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.StaffRequest;
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@FieldDefaults(
-        level =
-                AccessLevel
-                        .PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequestForStaff {
     @Size(min = 3, message = "USERNAME_INVALID")
     String username;
+
     @Size(min = 8, message = "INVALID_PASSWORD")
     String password;
+
     @NotBlank(message = "EMAIL_REQUIRED")
     @Email(message = "INVALID_EMAIL")
     String email;
@@ -30,7 +28,7 @@ public class UserCreationRequestForStaff {
     String fullName;
 
     @NotBlank(message = "PHONE_NUMBER_REQUIRED")
-    @Pattern(regexp = "^(0|\\+84)(\\d{9})$",message = "INVALID_PHONE_NUMBER")
+    @Pattern(regexp = "^(0|\\+84)(\\d{9})$", message = "INVALID_PHONE_NUMBER")
     String phoneNumber;
 
     @NotNull(message = "POSITION_NOT_EMPTY")

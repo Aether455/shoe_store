@@ -1,11 +1,9 @@
 package com.nguyenkhang.mobile_store.dto.response;
 
+import java.time.LocalDate;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +16,3 @@ public class RoleResponse {
     String description;
     LocalDate createAt;
 }
-

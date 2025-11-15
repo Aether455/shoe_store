@@ -1,19 +1,20 @@
 package com.nguyenkhang.mobile_store.dto.request.products;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Set;
 
+import jakarta.validation.constraints.*;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@FieldDefaults(level=AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductVariantUpdateRequest {
 
     @NotBlank(message = "SKU_REQUIRED")
@@ -31,8 +32,4 @@ public class ProductVariantUpdateRequest {
     @PositiveOrZero(message = "QUANTITY_INVALID")
     @NotNull(message = "QUANTITY_REQUIRED")
     int quantity;
-
-
-
-
 }

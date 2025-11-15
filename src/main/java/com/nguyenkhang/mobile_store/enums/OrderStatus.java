@@ -14,8 +14,6 @@ public enum OrderStatus {
     DELIVERING("Delivering"),
     DELIVERED("Delivered"),
     COMPLETED("Completed"),
-    CANCELLED("Canceled")
-;
+    CANCELLED("Canceled");
     String displayName;
-
-    }
+}

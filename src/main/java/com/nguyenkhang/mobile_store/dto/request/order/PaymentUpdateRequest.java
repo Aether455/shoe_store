@@ -1,7 +1,7 @@
 package com.nguyenkhang.mobile_store.dto.request.order;
 
-import com.nguyenkhang.mobile_store.enums.PaymentMethod;
 import com.nguyenkhang.mobile_store.enums.PaymentStatus;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

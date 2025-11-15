@@ -1,11 +1,12 @@
 package com.nguyenkhang.mobile_store.dto.response;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -30,5 +31,4 @@ public class DailyReportResponse {
     int newCustomersCount;
 
     BigDecimal totalDiscountAmount;
-
 }

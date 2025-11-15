@@ -1,12 +1,14 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -23,13 +25,14 @@ public class Warehouse {
 
     @Column(nullable = false)
     String name;
+
     @Column(columnDefinition = "TEXT")
     String address;
 
     @Column(columnDefinition = "TEXT")
     String description;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     int priority;
 
     @Column(nullable = false, length = 60)
@@ -47,12 +50,14 @@ public class Warehouse {
     @ManyToOne
     @JoinColumn(name = "create_by")
     User createBy;
+
     @ManyToOne
     @JoinColumn(name = "update_by")
     User updateBy;
 
     @CreationTimestamp
     LocalDateTime createAt;
+
     @UpdateTimestamp
     LocalDateTime updateAt;
 }

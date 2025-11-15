@@ -1,5 +1,15 @@
 package com.nguyenkhang.mobile_store.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nguyenkhang.mobile_store.dto.Coordinates;
 import com.nguyenkhang.mobile_store.dto.request.WarehouseRequest;
 import com.nguyenkhang.mobile_store.dto.response.WarehouseResponse;
@@ -9,18 +19,11 @@ import com.nguyenkhang.mobile_store.exception.ErrorCode;
 import com.nguyenkhang.mobile_store.mapper.WarehouseMapper;
 import com.nguyenkhang.mobile_store.repository.UserRepository;
 import com.nguyenkhang.mobile_store.repository.WarehouseRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -35,17 +38,14 @@ public class WarehouseService {
     GeocodingService geocodingService;
 
     @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public WarehouseResponse create(WarehouseRequest request) {
-
 
         var warehouse = warehouseMapper.toWarehouse(request);
         User userCreate = userService.getCurrentUser();
 
-        Coordinates coordinates = geocodingService.getCoordinates(
-                request.getWard(),
-                request.getDistrict(),
-                request.getProvince()
-        );
+        Coordinates coordinates =
+                geocodingService.getCoordinates(request.getWard(), request.getDistrict(), request.getProvince());
 
         if (coordinates != null) {
             warehouse.setLatitude(coordinates.getLatitude());
@@ -53,15 +53,16 @@ public class WarehouseService {
         }
 
         warehouse.setCreateBy(userCreate);
-        try{
+        try {
             warehouse = warehouseRepository.save(warehouse);
-        }catch(DataIntegrityViolationException e){
-            log.error("Error in create warehouse: ",e);
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error in create warehouse: ", e);
             throw new AppException(ErrorCode.PRIORITY_ALREADY_EXISTED);
         }
         return warehouseMapper.toWarehouseResponse(warehouse);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public Page<WarehouseResponse> get(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
@@ -71,16 +72,15 @@ public class WarehouseService {
     }
 
     @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public WarehouseResponse update(long id, WarehouseRequest request) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        var warehouse = warehouseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.WAREHOUSE_NOT_EXISTED));
+        var warehouse =
+                warehouseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.WAREHOUSE_NOT_EXISTED));
         warehouseMapper.update(warehouse, request);
-        Coordinates coordinates = geocodingService.getCoordinates(
-                request.getWard(),
-                request.getDistrict(),
-                request.getProvince()
-        );
+        Coordinates coordinates =
+                geocodingService.getCoordinates(request.getWard(), request.getDistrict(), request.getProvince());
 
         if (coordinates != null) {
             warehouse.setLatitude(coordinates.getLatitude());
@@ -94,11 +94,14 @@ public class WarehouseService {
         return warehouseMapper.toWarehouseResponse(warehouse);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public WarehouseResponse getById(long id) {
-        var warehouse = warehouseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.WAREHOUSE_NOT_EXISTED));
+        var warehouse =
+                warehouseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.WAREHOUSE_NOT_EXISTED));
         return warehouseMapper.toWarehouseResponse(warehouse);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long id) {
         warehouseRepository.deleteById(id);
     }

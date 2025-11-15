@@ -1,13 +1,15 @@
 package com.nguyenkhang.mobile_store.entity;
 
-import com.nguyenkhang.mobile_store.enums.InventoryReferenceType;
-import com.nguyenkhang.mobile_store.enums.VoucherType;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import com.nguyenkhang.mobile_store.enums.InventoryReferenceType;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -48,6 +50,4 @@ public class InventoryTransaction {
 
     @CreationTimestamp
     LocalDateTime createAt;
-
-
 }

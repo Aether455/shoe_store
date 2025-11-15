@@ -1,13 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.response;
 
-import com.nguyenkhang.mobile_store.entity.Customer;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,6 +26,4 @@ public class AddressResponse {
     String ward;
 
     LocalDateTime createAt;
-
-
 }

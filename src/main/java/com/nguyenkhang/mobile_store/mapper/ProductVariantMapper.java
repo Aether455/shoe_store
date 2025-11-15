@@ -1,16 +1,16 @@
 package com.nguyenkhang.mobile_store.mapper;
 
-import com.nguyenkhang.mobile_store.dto.request.products.VariantCreationOneRequest;
-import com.nguyenkhang.mobile_store.dto.request.products.ProductVariantUpdateRequest;
-import com.nguyenkhang.mobile_store.dto.request.products.VariantCreationRequest;
-import com.nguyenkhang.mobile_store.dto.response.product_variant.ProductVariantResponse;
-import com.nguyenkhang.mobile_store.entity.ProductVariant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+import com.nguyenkhang.mobile_store.dto.request.products.ProductVariantUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.products.VariantCreationOneRequest;
+import com.nguyenkhang.mobile_store.dto.request.products.VariantCreationRequest;
+import com.nguyenkhang.mobile_store.dto.response.product_variant.ProductVariantResponse;
+import com.nguyenkhang.mobile_store.entity.ProductVariant;
 
+@Mapper(componentModel = "spring")
 public interface ProductVariantMapper {
     @Mapping(target = "optionValues", ignore = true)
     @Mapping(target = "product", ignore = true)

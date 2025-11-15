@@ -1,10 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.response.user;
 
+import java.time.LocalDate;
+
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor

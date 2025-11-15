@@ -1,11 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.response.brand;
 
-import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 
+import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -26,5 +26,4 @@ public class BrandResponse {
     LocalDate createAt;
 
     LocalDate updateAt;
-
 }

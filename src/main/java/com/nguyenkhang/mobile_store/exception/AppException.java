@@ -10,7 +10,6 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AppException extends  RuntimeException {
+public class AppException extends RuntimeException {
     ErrorCode errorCode;
-
 }

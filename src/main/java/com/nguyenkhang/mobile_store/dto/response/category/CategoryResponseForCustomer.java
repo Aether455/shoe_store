@@ -13,5 +13,4 @@ public class CategoryResponseForCustomer {
     String id;
     String name;
     String description;
-
 }

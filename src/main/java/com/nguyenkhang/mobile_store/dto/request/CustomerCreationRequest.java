@@ -1,11 +1,12 @@
 package com.nguyenkhang.mobile_store.dto.request;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -15,14 +16,12 @@ import java.util.List;
 @Builder
 public class CustomerCreationRequest {
 
-
     @NotBlank(message = "FULL_NAME_REQUIRED")
     String fullName;
 
     @NotBlank(message = "PHONE_NUMBER_REQUIRED")
-    @Pattern(regexp =  "^(0|\\+84)(\\d{9})$",message = "INVALID_PHONE_NUMBER")
+    @Pattern(regexp = "^(0|\\+84)(\\d{9})$", message = "INVALID_PHONE_NUMBER")
     String phoneNumber;
 
-    List<String> addresses;
-
+    List<AddressRequest> addresses;
 }

@@ -1,13 +1,15 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -26,13 +28,12 @@ public class Option {
     @Column(unique = true, nullable = false)
     String name;
 
-    @OneToMany(mappedBy = "option",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
     List<OptionValue> optionValues;
 
     @ManyToOne
     @JoinColumn(name = "create_by")
     User createBy;
-
 
     @ManyToOne
     @JoinColumn(name = "update_by")
@@ -43,5 +44,4 @@ public class Option {
 
     @UpdateTimestamp
     LocalDateTime updateAt;
-
 }

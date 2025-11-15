@@ -1,5 +1,14 @@
 package com.nguyenkhang.mobile_store.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.nguyenkhang.mobile_store.dto.ApiResponse;
 import com.nguyenkhang.mobile_store.dto.response.DailyReportResponse;
 import com.nguyenkhang.mobile_store.dto.response.RevenueReportResponse;
@@ -10,17 +19,10 @@ import com.nguyenkhang.mobile_store.dto.response.statistic.ProductRevenueRespons
 import com.nguyenkhang.mobile_store.dto.response.statistic.SellingProductResponse;
 import com.nguyenkhang.mobile_store.service.DailyReportService;
 import com.nguyenkhang.mobile_store.service.StatisticService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/statistics")
@@ -31,52 +33,69 @@ public class StatisticController {
     StatisticService statisticService;
 
     @GetMapping("/daily-reports")
-    public ApiResponse<Page<DailyReportResponse>> get(@RequestParam(defaultValue = "0") int page,
-                                                      @RequestParam(defaultValue = "10") int size,
-                                                      @RequestParam(defaultValue = "id") String sortBy){
-        return ApiResponse.<Page<DailyReportResponse>>builder().result(dailyReportService.get(page, size, sortBy)).build();
+    public ApiResponse<Page<DailyReportResponse>> get(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        return ApiResponse.<Page<DailyReportResponse>>builder()
+                .result(dailyReportService.get(page, size, sortBy))
+                .build();
     }
 
     @GetMapping("/new-orders")
-    public ApiResponse<Page<SimpleOrderResponse>> getNewOrder(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size
-                                                             ){
-        return ApiResponse.<Page<SimpleOrderResponse>>builder().result(statisticService.getNewOrder(page, size)).build();
+    public ApiResponse<Page<SimpleOrderResponse>> getNewOrder(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.<Page<SimpleOrderResponse>>builder()
+                .result(statisticService.getNewOrder(page, size))
+                .build();
     }
 
     @GetMapping("/revenue-by-month")
-    public ApiResponse<List<RevenueReportResponse>> getRevenueByMonthAndYear(){
-        return ApiResponse.<List<RevenueReportResponse>>builder().result(statisticService.getRevenueByMonthAndYear()).build();
+    public ApiResponse<List<RevenueReportResponse>> getRevenueByMonthAndYear() {
+        return ApiResponse.<List<RevenueReportResponse>>builder()
+                .result(statisticService.getRevenueByMonthAndYear())
+                .build();
     }
 
-
     @GetMapping("/total-revenue")
-    public ApiResponse<BigDecimal> getTotalRevenue(){
-        return ApiResponse.<BigDecimal>builder().result(statisticService.getTotalRevenue()).build();
+    public ApiResponse<BigDecimal> getTotalRevenue() {
+        return ApiResponse.<BigDecimal>builder()
+                .result(statisticService.getTotalRevenue())
+                .build();
     }
 
     @GetMapping("/revenue-by-product")
-    public ApiResponse<List<ProductRevenueResponse>> getRevenueByProduct(){
-        return ApiResponse.<List<ProductRevenueResponse>>builder().result(statisticService.getRevenueByProduct()).build();
+    public ApiResponse<List<ProductRevenueResponse>> getRevenueByProduct() {
+        return ApiResponse.<List<ProductRevenueResponse>>builder()
+                .result(statisticService.getRevenueByProduct())
+                .build();
     }
 
     @GetMapping("/revenue-by-category")
-    public ApiResponse<List<CategoryRevenueResponse>> getRevenueByCategory(){
-        return ApiResponse.<List<CategoryRevenueResponse>>builder().result(statisticService.getRevenueByCategory()).build();
+    public ApiResponse<List<CategoryRevenueResponse>> getRevenueByCategory() {
+        return ApiResponse.<List<CategoryRevenueResponse>>builder()
+                .result(statisticService.getRevenueByCategory())
+                .build();
     }
 
     @GetMapping("/revenue-by-brand")
-    public ApiResponse<List<BrandRevenueResponse>> getRevenueByBrand(){
-        return ApiResponse.<List<BrandRevenueResponse>>builder().result(statisticService.getRevenueByBrand()).build();
+    public ApiResponse<List<BrandRevenueResponse>> getRevenueByBrand() {
+        return ApiResponse.<List<BrandRevenueResponse>>builder()
+                .result(statisticService.getRevenueByBrand())
+                .build();
     }
 
     @GetMapping("/top-selling-products")
-    public ApiResponse<List<SellingProductResponse>> getTopSellingProducts(){
-        return ApiResponse.<List<SellingProductResponse>>builder().result(statisticService.getTopSellingProductsByQuantity()).build();
+    public ApiResponse<List<SellingProductResponse>> getTopSellingProducts() {
+        return ApiResponse.<List<SellingProductResponse>>builder()
+                .result(statisticService.getTopSellingProductsByQuantity())
+                .build();
     }
 
     @GetMapping("/top-revenue-products")
-    public ApiResponse<Page<ProductRevenueResponse>> getTopRevenueProducts(){
-        return ApiResponse.<Page<ProductRevenueResponse>>builder().result(statisticService.getTopRevenueProducts()).build();
+    public ApiResponse<Page<ProductRevenueResponse>> getTopRevenueProducts() {
+        return ApiResponse.<Page<ProductRevenueResponse>>builder()
+                .result(statisticService.getTopRevenueProducts())
+                .build();
     }
 }

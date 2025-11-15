@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 public enum PaymentStatus {
     PENDING("Wait for payment"),
     SUCCESS("Success"),
-    FAILED("Failed")
-;
+    FAILED("Failed");
     String displayName;
 }

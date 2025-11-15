@@ -1,5 +1,9 @@
 package com.nguyenkhang.mobile_store.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
 import com.nguyenkhang.mobile_store.dto.request.user.UserCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.user.UserCreationRequestForCustomer;
 import com.nguyenkhang.mobile_store.dto.request.user.UserCreationRequestForStaff;
@@ -8,9 +12,6 @@ import com.nguyenkhang.mobile_store.dto.response.user.UserResponse;
 import com.nguyenkhang.mobile_store.dto.response.user.UserResponseForCustomer;
 import com.nguyenkhang.mobile_store.dto.response.user.UserResponseForStaff;
 import com.nguyenkhang.mobile_store.entity.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -27,7 +28,6 @@ public interface UserMapper {
 
     UserResponseForStaff toUserResponseForStaff(User user);
 
-
-    @Mapping(target = "roles",ignore = true)
+    @Mapping(target = "roles", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest userUpdateRequest);
 }

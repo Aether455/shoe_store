@@ -2,6 +2,7 @@ package com.nguyenkhang.mobile_store.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 public class CartItemRequest {
     @NotNull(message = "PRODUCT_VARIANT_REQUIRED")
     long productVariantId;
+
     @NotNull(message = "PRODUCT_REQUIRED")
     long productId;
 

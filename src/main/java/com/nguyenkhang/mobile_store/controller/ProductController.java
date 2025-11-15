@@ -1,22 +1,25 @@
 package com.nguyenkhang.mobile_store.controller;
 
+import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
 import com.nguyenkhang.mobile_store.dto.ApiResponse;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductAndVariantsCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductRequest;
-import com.nguyenkhang.mobile_store.dto.request.products.VariantCreationOneRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductVariantUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.products.VariantCreationOneRequest;
 import com.nguyenkhang.mobile_store.dto.response.product.ProductResponse;
 import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
 import com.nguyenkhang.mobile_store.dto.response.product_variant.ProductVariantResponse;
 import com.nguyenkhang.mobile_store.service.ProductService;
 import com.nguyenkhang.mobile_store.service.ProductVariantService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
@@ -28,24 +31,34 @@ public class ProductController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ProductResponse> create(@ModelAttribute @Valid ProductAndVariantsCreationRequest request) {
-        return ApiResponse.<ProductResponse>builder().message("Success!").result(productService.createProductAndVariants(request)).build();
+        return ApiResponse.<ProductResponse>builder()
+                .message("Success!")
+                .result(productService.createProductAndVariants(request))
+                .build();
     }
 
     @GetMapping
-    public ApiResponse<Page<SimpleProductResponse>> getProducts(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size,
-                                                          @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<SimpleProductResponse>>builder().result(productService.getProducts(page, size, sortBy)).build();
+    public ApiResponse<Page<SimpleProductResponse>> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        return ApiResponse.<Page<SimpleProductResponse>>builder()
+                .result(productService.getProducts(page, size, sortBy))
+                .build();
     }
+
     @GetMapping("/{productId}")
     public ApiResponse<ProductResponse> getProductById(@PathVariable long productId) {
-        return ApiResponse.<ProductResponse>builder().result(productService.getById(productId)).build();
+        return ApiResponse.<ProductResponse>builder()
+                .result(productService.getById(productId))
+                .build();
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<ProductResponse> update(@PathVariable long id,
-                                               @ModelAttribute @Valid ProductRequest request) {
-        return ApiResponse.<ProductResponse>builder().result(productService.update(id, request)).build();
+    public ApiResponse<ProductResponse> update(@PathVariable long id, @ModelAttribute @Valid ProductRequest request) {
+        return ApiResponse.<ProductResponse>builder()
+                .result(productService.update(id, request))
+                .build();
     }
 
     @DeleteMapping("/{id}")
@@ -54,17 +67,19 @@ public class ProductController {
         return ApiResponse.<String>builder().result("Product has been deleted").build();
     }
 
-    @PostMapping(value = "/variants",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/variants", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ProductVariantResponse> createVariant(@ModelAttribute @Valid VariantCreationOneRequest request) {
-        return ApiResponse.<ProductVariantResponse>builder().result(variantService.createOne(request)).build();
-
+        return ApiResponse.<ProductVariantResponse>builder()
+                .result(variantService.createOne(request))
+                .build();
     }
 
-    @PutMapping(value = "/variants/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<ProductVariantResponse> updateVariant(@PathVariable long id,
-                                                             @ModelAttribute @Valid ProductVariantUpdateRequest request) {
-        return ApiResponse.<ProductVariantResponse>builder().result(variantService.update(id, request)).build();
-
+    @PutMapping(value = "/variants/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<ProductVariantResponse> updateVariant(
+            @PathVariable long id, @ModelAttribute @Valid ProductVariantUpdateRequest request) {
+        return ApiResponse.<ProductVariantResponse>builder()
+                .result(variantService.update(id, request))
+                .build();
     }
 
     @DeleteMapping("/variants/{id}")

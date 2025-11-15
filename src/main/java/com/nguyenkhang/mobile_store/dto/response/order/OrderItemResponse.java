@@ -1,13 +1,10 @@
 package com.nguyenkhang.mobile_store.dto.response.order;
 
-import com.nguyenkhang.mobile_store.dto.response.product.ProductResponse;
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
-import com.nguyenkhang.mobile_store.dto.response.product_variant.ProductVariantResponse;
-import com.nguyenkhang.mobile_store.dto.response.product_variant.SimpleProductVariantResponse;
-import com.nguyenkhang.mobile_store.entity.Order;
-import com.nguyenkhang.mobile_store.entity.Product;
-import com.nguyenkhang.mobile_store.entity.ProductVariant;
 import jakarta.persistence.*;
+
+import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
+import com.nguyenkhang.mobile_store.dto.response.product_variant.SimpleProductVariantResponse;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,12 +1,13 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -34,5 +35,4 @@ public class OrderStatusHistory {
 
     @CreationTimestamp
     LocalDateTime changeAt;
-
 }

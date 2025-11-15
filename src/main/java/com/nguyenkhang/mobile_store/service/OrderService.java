@@ -1,5 +1,22 @@
 package com.nguyenkhang.mobile_store.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nguyenkhang.mobile_store.dto.Coordinates;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderItemRequest;
@@ -18,25 +35,11 @@ import com.nguyenkhang.mobile_store.mapper.OrderMapper;
 import com.nguyenkhang.mobile_store.mapper.PaymentMapper;
 import com.nguyenkhang.mobile_store.repository.*;
 import com.nguyenkhang.mobile_store.specification.OrderSpecification;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,7 +52,6 @@ public class OrderService {
     InventoryRepository inventoryRepository;
     WarehouseRepository warehouseRepository;
     InventoryTransactionRepository inventoryTransactionRepository;
-
 
     ProductVariantRepository variantRepository;
     OrderRepository orderRepository;
@@ -65,10 +67,15 @@ public class OrderService {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        Customer customer = customerRepository.findById(request.getCustomerId()).orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
-        Voucher voucher = voucherRepository.findByVoucherCode(request.getVoucherCode()).orElse(null);
+        Customer customer = customerRepository
+                .findById(request.getCustomerId())
+                .orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
+        Voucher voucher =
+                voucherRepository.findByVoucherCode(request.getVoucherCode()).orElse(null);
 
-        Set<Long> variantIds = request.getOrderItems().stream().map(OrderItemRequest::getProductVariantId).collect(Collectors.toSet());
+        Set<Long> variantIds = request.getOrderItems().stream()
+                .map(OrderItemRequest::getProductVariantId)
+                .collect(Collectors.toSet());
 
         Map<Long, ProductVariant> productVariantMap = variantRepository.findAllById(variantIds).stream()
                 .collect(Collectors.toMap(ProductVariant::getId, Function.identity()));
@@ -96,7 +103,6 @@ public class OrderService {
             orderItemList.add(orderItem);
         }
 
-
         order.setOrderItems(orderItemList);
         order.setUser(user);
         order.setCustomer(customer);
@@ -106,11 +112,8 @@ public class OrderService {
         calculateAmount(order);
         try {
 
-            Coordinates coordinates = geocodingService.getCoordinates(
-                    request.getWard(),
-                    request.getDistrict(),
-                    request.getProvince()
-            );
+            Coordinates coordinates =
+                    geocodingService.getCoordinates(request.getWard(), request.getDistrict(), request.getProvince());
 
             if (coordinates != null) {
                 order.setDeliveryLatitude(coordinates.getLatitude());
@@ -125,7 +128,6 @@ public class OrderService {
         payment.setOrder(order);
         order.setPayment(payment);
 
-
         try {
             order = orderRepository.save(order);
         } catch (DataIntegrityViolationException e) {
@@ -136,6 +138,7 @@ public class OrderService {
         return orderMapper.toOrderResponse(order);
     }
 
+    @Transactional
     public OrderResponse confirmOrder(long id) {
 
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
@@ -149,7 +152,8 @@ public class OrderService {
             throw new AppException(ErrorCode.ORDER_COORDINATES_MISSING);
         }
 
-        List<Warehouse> sortedWarehouses = warehouseRepository.findAllSortedByDistance(order.getDeliveryLatitude(), order.getDeliveryLongitude());
+        List<Warehouse> sortedWarehouses =
+                warehouseRepository.findAllSortedByDistance(order.getDeliveryLatitude(), order.getDeliveryLongitude());
         log.info("Sort Warehouse is: {}", sortedWarehouses);
         if (sortedWarehouses.isEmpty()) {
             throw new AppException(ErrorCode.WAREHOUSE_NOT_FOUND);
@@ -157,31 +161,33 @@ public class OrderService {
 
         Warehouse assignedWarehouse = null;
         Map<Long, Inventory> fulfillmentInventoryMap = null;
-        Set<Long> variantIds = order.getOrderItems().stream().map((item) -> item.getProductVariant().getId()).collect(Collectors.toSet());
-        for (var wh : sortedWarehouses){
-            Map<Long, Inventory> currentInventoryMap = inventoryRepository.findByWarehouseIdAndProductVariant_IdIn(wh.getId(), variantIds)
-                    .stream()
-                    .collect(Collectors.toMap((inventory) -> inventory.getProductVariant().getId(), Function.identity()));
+        Set<Long> variantIds = order.getOrderItems().stream()
+                .map((item) -> item.getProductVariant().getId())
+                .collect(Collectors.toSet());
+        for (var wh : sortedWarehouses) {
+            Map<Long, Inventory> currentInventoryMap =
+                    inventoryRepository.findByWarehouseIdAndProductVariant_IdIn(wh.getId(), variantIds).stream()
+                            .collect(Collectors.toMap(
+                                    (inventory) -> inventory.getProductVariant().getId(), Function.identity()));
 
             boolean canFulfill = true;
-            for (var item :  order.getOrderItems()){
+            for (var item : order.getOrderItems()) {
                 var inventory = currentInventoryMap.get(item.getProductVariant().getId());
-                if (inventory == null || inventory.getQuantity()<item.getQuantity()){
+                if (inventory == null || inventory.getQuantity() < item.getQuantity()) {
                     canFulfill = false;
-                    break;//kho ko phù hợp, next
+                    break; // kho ko phù hợp, next
                 }
             }
 
-            if (canFulfill){
+            if (canFulfill) {
                 assignedWarehouse = wh;
                 fulfillmentInventoryMap = currentInventoryMap;
                 break; // thoát vòng lặp sau khi tìm thấy kho phù hợp
             }
         }
 
-
-        //null tức là ko có kho phù hợp
-        if (assignedWarehouse!=null){
+        // null tức là ko có kho phù hợp
+        if (assignedWarehouse != null) {
             log.info("Warehouse is: {}", assignedWarehouse);
             Map<Long, ProductVariant> productVariantMap = variantRepository.findAllById(variantIds).stream()
                     .collect(Collectors.toMap(ProductVariant::getId, Function.identity()));
@@ -197,19 +203,18 @@ public class OrderService {
 
                 Inventory inventory = fulfillmentInventoryMap.get(variantId);
 
-                if (inventory.getQuantity()<quantityToBuy){
+                if (inventory.getQuantity() < quantityToBuy) {
                     throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
                 }
-                //trừ kho đơn lẻ
+                // trừ kho đơn lẻ
                 inventory.setQuantity(inventory.getQuantity() - quantityToBuy);
                 inventoriesToUpdate.add(inventory);
 
-                //trừ tổng kho
+                // trừ tổng kho
                 variant.setQuantity(variant.getQuantity() - quantityToBuy);
                 variantToUpdate.add(variant);
 
-
-                //ghi ls giao dịch kho
+                // ghi ls giao dịch kho
                 InventoryTransaction inventoryTransaction = InventoryTransaction.builder()
                         .warehouse(assignedWarehouse)
                         .productVariant(variant)
@@ -220,7 +225,6 @@ public class OrderService {
                         .referenceId(order.getId())
                         .build();
                 inventoryTransactionsToCreate.add(inventoryTransaction);
-
             }
 
             order.setStatus(OrderStatus.CONFIRMED);
@@ -240,18 +244,18 @@ public class OrderService {
                 inventoryTransactionRepository.saveAll(inventoryTransactionsToCreate);
             } catch (DataIntegrityViolationException e) {
                 log.error("Error in confirm order: ", e);
-                throw new AppException(ErrorCode.ORDER_CREATE_FAIL);
+                throw new AppException(ErrorCode.ORDER_CONFIRM_FAIL);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 throw new AppException(ErrorCode.PRODUCT_JUST_SOLD_OUT);
             }
 
-
             return orderMapper.toOrderResponse(order);
         }
-//ko có kho phù hợp -> ném lỗi
+        // ko có kho phù hợp -> ném lỗi
         throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
     }
 
+    @Transactional
     public OrderResponse cancelOrder(long id) {
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
         User user = userService.getCurrentUser();
@@ -275,7 +279,7 @@ public class OrderService {
         return orderMapper.toOrderResponse(order);
     }
 
-
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public Page<OrderResponse> getOrders(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         var order = orderRepository.findAll(pageable);
@@ -283,6 +287,7 @@ public class OrderService {
         return order.map(orderMapper::toOrderResponse);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public OrderResponse getOrderById(long id) {
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
         log.info("Order Item {}", order.getOrderItems());
@@ -292,19 +297,23 @@ public class OrderService {
 
     public Page<SimpleOrderResponseForCustomer> getMyOrders(int page, int size, String sortBy) {
 
-        User user =userService.getCurrentUser();
+        User user = userService.getCurrentUser();
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         var order = orderRepository.findAllByUserId(user.getId(), pageable);
         return order.map(orderMapper::toSimpleOrderResponseForCustomer);
     }
 
-    public Page<SimpleOrderResponse> searchOrders(String keyword,int page){
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
+    public Page<SimpleOrderResponse> searchOrders(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 20);
-        return orderRepository.findAll(OrderSpecification.createSpecification(keyword), pageable).map(orderMapper::toSimpleOrderResponse);
+        return orderRepository
+                .findAll(OrderSpecification.createSpecification(keyword), pageable)
+                .map(orderMapper::toSimpleOrderResponse);
     }
 
     @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public OrderResponse updateStatus(long id, OrderUpdateStatusRequest request) {
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
 
@@ -324,19 +333,24 @@ public class OrderService {
         order.setStatus(request.getOrderStatus());
         order.setUpdateBy(user);
 
-
         List<Inventory> inventoriesToUpdate = new ArrayList<>();
         List<ProductVariant> variantToUpdate = new ArrayList<>();
         List<InventoryTransaction> inventoryTransactionsToCreate = new ArrayList<>();
-        if (request.getOrderStatus().equals(OrderStatus.CANCELLED)){
-            Set<Long> variantIds = order.getOrderItems().stream().map((item) -> item.getProductVariant().getId()).collect(Collectors.toSet());
+        if (request.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+            Set<Long> variantIds = order.getOrderItems().stream()
+                    .map((item) -> item.getProductVariant().getId())
+                    .collect(Collectors.toSet());
 
             Map<Long, ProductVariant> productVariantMap = variantRepository.findAllById(variantIds).stream()
                     .collect(Collectors.toMap(ProductVariant::getId, Function.identity()));
 
-            Map<Long, Inventory> inventoryMap = inventoryRepository.findByWarehouseIdAndProductVariant_IdIn(order.getWarehouse().getId(), variantIds)
-                    .stream()
-                    .collect(Collectors.toMap((inventory) -> inventory.getProductVariant().getId(), Function.identity()));
+            Map<Long, Inventory> inventoryMap =
+                    inventoryRepository
+                            .findByWarehouseIdAndProductVariant_IdIn(
+                                    order.getWarehouse().getId(), variantIds)
+                            .stream()
+                            .collect(Collectors.toMap(
+                                    (inventory) -> inventory.getProductVariant().getId(), Function.identity()));
 
             for (var item : order.getOrderItems()) {
                 Long variantId = item.getProductVariant().getId();
@@ -346,16 +360,15 @@ public class OrderService {
 
                 Inventory inventory = inventoryMap.get(variantId);
 
-
-                //trả lại kho đơn lẻ
+                // trả lại kho đơn lẻ
                 inventory.setQuantity(inventory.getQuantity() + quantityToBuy);
                 inventoriesToUpdate.add(inventory);
 
-                //trả lại tổng kho
+                // trả lại tổng kho
                 variant.setQuantity(variant.getQuantity() + quantityToBuy);
                 variantToUpdate.add(variant);
 
-                //ghi ls giao dịch kho
+                // ghi ls giao dịch kho
                 InventoryTransaction inventoryTransaction = InventoryTransaction.builder()
                         .warehouse(order.getWarehouse())
                         .productVariant(variant)
@@ -366,9 +379,7 @@ public class OrderService {
                         .referenceId(order.getId())
                         .build();
                 inventoryTransactionsToCreate.add(inventoryTransaction);
-
             }
-
         }
 
         try {
@@ -385,11 +396,12 @@ public class OrderService {
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public OrderResponse update(long id, OrderUpdateRequest request) {
 
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
 
-        if (!order.getStatus().name().equals(OrderStatus.PENDING.name())){
+        if (!order.getStatus().name().equals(OrderStatus.PENDING.name())) {
             throw new AppException(ErrorCode.ORDER_CHANGE_INFO_STATUS_INVALID);
         }
 
@@ -401,6 +413,7 @@ public class OrderService {
         try {
             order = orderRepository.save(order);
         } catch (Exception e) {
+            log.error("Error when create order: ", e);
             throw new RuntimeException(e);
         }
 
@@ -414,7 +427,9 @@ public class OrderService {
     }
 
     void calculateAmount(Order order) {
-        double totalAmount = order.getOrderItems().stream().mapToDouble(OrderItem::getTotalPrice).sum();
+        double totalAmount = order.getOrderItems().stream()
+                .mapToDouble(OrderItem::getTotalPrice)
+                .sum();
         order.setTotalAmount(totalAmount);
 
         if (order.getVoucher() == null) {
@@ -425,7 +440,8 @@ public class OrderService {
             double reducedAmount = 0;
 
             boolean isActive = voucher.getStatus() == VoucherStatus.ACTIVE;
-            boolean isExpire = LocalDateTime.now().isAfter(voucher.getStartDate()) && LocalDateTime.now().isBefore(voucher.getEndDate());
+            boolean isExpire = LocalDateTime.now().isAfter(voucher.getStartDate())
+                    && LocalDateTime.now().isBefore(voucher.getEndDate());
 
             if (!isExpire || !isActive || totalAmount < voucher.getMinApplicablePrice()) {
                 order.setReducedAmount(0);
@@ -447,8 +463,5 @@ public class OrderService {
             order.setReducedAmount(reducedAmount);
             order.setFinalAmount(totalAmount - reducedAmount);
         }
-
     }
-
-
 }

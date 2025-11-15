@@ -2,6 +2,7 @@ package com.nguyenkhang.mobile_store.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,10 +16,13 @@ public class WarehouseRequest {
 
     @NotBlank(message = "WAREHOUSE_NAME_REQUIRED")
     String name;
+
     @NotBlank(message = "ADDRESS_REQUIRED")
     String address;
+
     @NotNull(message = "PRIORITY_REQUIRED")
     int priority;
+
     @NotBlank(message = "PROVINCE_REQUIRED")
     String province;
 
@@ -30,5 +34,4 @@ public class WarehouseRequest {
 
     @NotBlank(message = "DESCRIPTION_REQUIRED")
     String description;
-
 }

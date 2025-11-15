@@ -1,14 +1,15 @@
 package com.nguyenkhang.mobile_store.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -17,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"product_id","signature"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "signature"}))
 public class ProductVariant {
 
     @Id
@@ -33,25 +34,25 @@ public class ProductVariant {
 
     @Column(columnDefinition = "TEXT")
     String productVariantImageUrl;
+
     String imagePublicId;
 
     Double price;
 
-
     @ManyToMany
-    @JoinTable(name = "product_variant_option_values",
+    @JoinTable(
+            name = "product_variant_option_values",
             joinColumns = @JoinColumn(name = "variant_id"),
-            inverseJoinColumns = @JoinColumn(name = "option_value_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "option_value_id"))
     Set<OptionValue> optionValues;
 
     @Column(columnDefinition = "int default 0")
     int quantity;
 
-
     @ManyToOne
     @JoinColumn(name = "create_by")
     User createBy;
+
     @ManyToOne
     @JoinColumn(name = "update_by")
     User updateBy;
@@ -67,5 +68,4 @@ public class ProductVariant {
 
     @Version
     Long version;
-
 }

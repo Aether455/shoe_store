@@ -1,10 +1,9 @@
 package com.nguyenkhang.mobile_store.dto.response.order;
 
-import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
+import java.time.LocalDateTime;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

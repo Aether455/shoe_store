@@ -1,14 +1,17 @@
 package com.nguyenkhang.mobile_store.entity;
 
-import com.nguyenkhang.mobile_store.enums.OrderStatus;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.nguyenkhang.mobile_store.enums.OrderStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -18,11 +21,9 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "orders")
-@NamedEntityGraph(name = "Order.withItems",
-        attributeNodes = {
-                @NamedAttributeNode(value = "orderItems")
-        }
-)
+@NamedEntityGraph(
+        name = "Order.withItems",
+        attributeNodes = {@NamedAttributeNode(value = "orderItems")})
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +32,6 @@ public class Order {
 
     @Column(unique = true, length = 20)
     String orderCode;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")

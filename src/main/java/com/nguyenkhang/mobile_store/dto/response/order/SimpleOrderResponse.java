@@ -1,11 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.response.order;
 
+import java.time.LocalDateTime;
+
 import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -39,5 +39,4 @@ public class SimpleOrderResponse {
     LocalDateTime updateAt;
     SimpleUserResponse createBy;
     SimpleUserResponse updateBy;
-
 }

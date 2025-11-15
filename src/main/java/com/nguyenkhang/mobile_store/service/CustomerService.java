@@ -1,33 +1,35 @@
 package com.nguyenkhang.mobile_store.service;
 
-import com.nguyenkhang.mobile_store.dto.request.AddressRequest;
-import com.nguyenkhang.mobile_store.dto.request.CustomerCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.CustomerUpdateRequest;
-import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
-import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponseForUser;
-import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponse;
-import com.nguyenkhang.mobile_store.entity.Customer;
-import com.nguyenkhang.mobile_store.entity.User;
-import com.nguyenkhang.mobile_store.exception.AppException;
-import com.nguyenkhang.mobile_store.exception.ErrorCode;
-import com.nguyenkhang.mobile_store.mapper.CustomerMapper;
-import com.nguyenkhang.mobile_store.repository.CustomerRepository;
-import com.nguyenkhang.mobile_store.repository.UserRepository;
-import com.nguyenkhang.mobile_store.specification.CustomerSpecification;
-import com.nguyenkhang.mobile_store.specification.OrderSpecification;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
+import com.nguyenkhang.mobile_store.dto.request.CustomerCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.CustomerUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
+import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponseForUser;
+import com.nguyenkhang.mobile_store.entity.Address;
+import com.nguyenkhang.mobile_store.entity.Customer;
+import com.nguyenkhang.mobile_store.entity.User;
+import com.nguyenkhang.mobile_store.exception.AppException;
+import com.nguyenkhang.mobile_store.exception.ErrorCode;
+import com.nguyenkhang.mobile_store.mapper.AddressMapper;
+import com.nguyenkhang.mobile_store.mapper.CustomerMapper;
+import com.nguyenkhang.mobile_store.repository.CustomerRepository;
+import com.nguyenkhang.mobile_store.repository.UserRepository;
+import com.nguyenkhang.mobile_store.specification.CustomerSpecification;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Service
 @RequiredArgsConstructor
@@ -37,58 +39,61 @@ public class CustomerService {
     CustomerMapper customerMapper;
     CustomerRepository customerRepository;
     AddressService addressService;
+    AddressMapper addressMapper;
     UserRepository userRepository;
 
     UserService userService;
 
-// admin & nv
+    // admin & nv
     @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public CustomerResponse create(CustomerCreationRequest request) {
 
         if (customerRepository.existsByPhoneNumber(request.getPhoneNumber())) {
             throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
-
         }
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-        User userCreate = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User userCreate =
+                userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         var customer = customerMapper.toCustomer(request);
 
         customer.setCreateBy(userCreate);
-        customer = customerRepository.save(customer);
 
         if (!(request.getAddresses().isEmpty())) {
-            AddressRequest addressRequest = new AddressRequest();
+            List<Address> addresses = new ArrayList<>();
 
-            for (String address : request.getAddresses()) {
-                addressRequest.setCustomerId(customer.getId());
-                addressRequest.setAddress(address);
-                addressService.create(addressRequest);
+            for (var address : request.getAddresses()) {
+                addresses.add(addressMapper.toAddress(address));
             }
-        }
 
+            customer.setAddresses(addresses);
+        }
+        customer = customerRepository.save(customer);
 
         return customerMapper.toCustomerResponse(customer);
     }
-// admin & nv
 
+    // admin & nv
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public Page<CustomerResponse> getALl(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         var customers = customerRepository.findAll(pageable);
 
         return customers.map(customerMapper::toCustomerResponse);
     }
-// admin & nv
-@Transactional
+
+    // admin & nv
+    @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public CustomerResponse update(long id, CustomerUpdateRequest updateRequest) {
         if (customerRepository.existsByPhoneNumberAndIdNot(updateRequest.getPhoneNumber(), id)) {
             throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
         }
 
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
-
-
+        Customer customer =
+                customerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
 
         User userUpdate = userService.getCurrentUser();
 
@@ -99,9 +104,10 @@ public class CustomerService {
 
         return customerMapper.toCustomerResponse(customer);
     }
-//nguoi dung
-@Transactional
-public CustomerResponseForUser updateByCurrentUser(CustomerUpdateRequest updateRequest) {
+
+    // nguoi dung
+    @Transactional
+    public CustomerResponseForUser updateByCurrentUser(CustomerUpdateRequest updateRequest) {
         User user = userService.getCurrentUser();
 
         Customer customer = customerRepository.findByUserId(user.getId()).orElse(null);
@@ -111,7 +117,8 @@ public CustomerResponseForUser updateByCurrentUser(CustomerUpdateRequest updateR
                 throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
             }
 
-            customer = Customer.builder().user(user)
+            customer = Customer.builder()
+                    .user(user)
                     .fullName(updateRequest.getFullName())
                     .phoneNumber(updateRequest.getPhoneNumber())
                     .build();
@@ -127,13 +134,17 @@ public CustomerResponseForUser updateByCurrentUser(CustomerUpdateRequest updateR
         return customerMapper.toCustomerResponseForUser(customer);
     }
 
-    public Page<CustomerResponse> searchCustomers(String keyword, int page){
+    public Page<CustomerResponse> searchCustomers(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 20);
-        return customerRepository.findAll(CustomerSpecification.createSpecification(keyword),pageable).map(customerMapper::toCustomerResponse);
+        return customerRepository
+                .findAll(CustomerSpecification.createSpecification(keyword), pageable)
+                .map(customerMapper::toCustomerResponse);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public CustomerResponse getById(long id) {
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
+        Customer customer =
+                customerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
 
         return customerMapper.toCustomerResponse(customer);
     }
@@ -141,11 +152,14 @@ public CustomerResponseForUser updateByCurrentUser(CustomerUpdateRequest updateR
     public CustomerResponseForUser getCustomerByCurrentUser() {
         User user = userService.getCurrentUser();
 
-        Customer customer = customerRepository.findByUserId(user.getId()).orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
+        Customer customer = customerRepository
+                .findByUserId(user.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXISTED));
 
         return customerMapper.toCustomerResponseForUser(customer);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long id) {
         customerRepository.deleteById(id);
     }

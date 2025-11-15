@@ -1,6 +1,5 @@
 package com.nguyenkhang.mobile_store.dto.response.statistic;
 
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,10 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.response;
 
+import java.time.LocalDateTime;
+
 import com.nguyenkhang.mobile_store.dto.response.user.UserResponse;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,7 +27,6 @@ public class StaffResponse {
 
     double salary;
 
-
     UserResponse createBy;
 
     UserResponse updateBy;
@@ -34,5 +34,4 @@ public class StaffResponse {
     LocalDateTime createAt;
 
     LocalDateTime updateAt;
-
 }

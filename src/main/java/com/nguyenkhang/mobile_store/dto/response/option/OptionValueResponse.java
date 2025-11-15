@@ -1,10 +1,11 @@
 package com.nguyenkhang.mobile_store.dto.response.option;
 
+import java.time.LocalDateTime;
+
 import com.nguyenkhang.mobile_store.dto.response.user.UserResponse;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,5 +26,4 @@ public class OptionValueResponse {
     LocalDateTime createAt;
 
     LocalDateTime updateAt;
-
 }

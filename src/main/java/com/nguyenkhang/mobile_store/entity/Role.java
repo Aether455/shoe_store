@@ -1,15 +1,14 @@
 package com.nguyenkhang.mobile_store.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -27,7 +26,7 @@ public class Role {
 
     @CreationTimestamp
     LocalDateTime createAt;
+
     @UpdateTimestamp
     LocalDateTime updateAt;
-
 }

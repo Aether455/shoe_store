@@ -1,13 +1,13 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,7 +20,7 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-     Long id;
+    Long id;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -40,6 +40,4 @@ public class Address {
 
     @CreationTimestamp
     LocalDateTime createAt;
-
-
 }

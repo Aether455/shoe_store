@@ -1,14 +1,15 @@
 package com.nguyenkhang.mobile_store.dto.response.order;
 
-import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponse;
-import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
-import com.nguyenkhang.mobile_store.dto.response.payment.PaymentResponse;
-import com.nguyenkhang.mobile_store.enums.OrderStatus;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
+import com.nguyenkhang.mobile_store.dto.response.payment.PaymentResponse;
+import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponse;
+import com.nguyenkhang.mobile_store.enums.OrderStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -29,8 +30,6 @@ public class OrderResponseForCustomer {
     double reducedAmount;
     double totalAmount;
     double finalAmount;
-
-
 
     VoucherResponse voucher;
     CustomerResponse customer;

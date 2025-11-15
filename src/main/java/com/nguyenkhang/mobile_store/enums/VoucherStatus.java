@@ -11,9 +11,7 @@ import lombok.experimental.FieldDefaults;
 public enum VoucherStatus {
     ACTIVE("Active"),
     EXPIRED("Expired"),
-    INACTIVE("Inactive")
-
-    ;
+    INACTIVE("Inactive");
 
     String displayName;
 }

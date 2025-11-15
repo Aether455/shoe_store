@@ -1,10 +1,11 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -30,8 +31,9 @@ public class PurchaseOrderItem {
     @Column(nullable = false)
     int quantity;
 
-    @Column(nullable = false,precision = 15,scale = 2)
+    @Column(nullable = false, precision = 15, scale = 2)
     BigDecimal pricePerUnit;
-    @Column(nullable = false,precision = 15,scale = 2)
+
+    @Column(nullable = false, precision = 15, scale = 2)
     BigDecimal total;
 }

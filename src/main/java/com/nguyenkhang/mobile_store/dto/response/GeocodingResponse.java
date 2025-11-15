@@ -1,6 +1,7 @@
 package com.nguyenkhang.mobile_store.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class GeocodingResponse {
     @JsonProperty("lat")
     String latitude;
+
     @JsonProperty("lon")
     String longitude;
 }

@@ -1,5 +1,12 @@
 package com.nguyenkhang.mobile_store.service;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nguyenkhang.mobile_store.dto.request.option.OptionValueRequest;
 import com.nguyenkhang.mobile_store.dto.response.option.OptionValueResponse;
 import com.nguyenkhang.mobile_store.entity.User;
@@ -9,14 +16,10 @@ import com.nguyenkhang.mobile_store.mapper.OptionValueMapper;
 import com.nguyenkhang.mobile_store.repository.OptionRepository;
 import com.nguyenkhang.mobile_store.repository.OptionValueRepository;
 import com.nguyenkhang.mobile_store.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,17 +29,22 @@ public class OptionValueService {
     OptionValueRepository optionValueRepository;
     UserRepository userRepository;
     OptionRepository optionRepository;
-    @Transactional
-    public OptionValueResponse create(OptionValueRequest request){
 
-        if (optionValueRepository.existsByValue(request.getValue())){
-            throw  new AppException(ErrorCode.OPTION_VALUE_EXISTED);
+    @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
+    public OptionValueResponse create(OptionValueRequest request) {
+
+        if (optionValueRepository.existsByValue(request.getValue())) {
+            throw new AppException(ErrorCode.OPTION_VALUE_EXISTED);
         }
 
-        var option = optionRepository.findById(request.getOptionId()).orElseThrow(()->new AppException(ErrorCode.OPTION_NOT_EXISTED));
+        var option = optionRepository
+                .findById(request.getOptionId())
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_EXISTED));
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        User userCreate = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User userCreate =
+                userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         var optionValue = optionValueMapper.toOptionValue(request);
         optionValue.setOption(option);
@@ -46,11 +54,15 @@ public class OptionValueService {
         return optionValueMapper.toOptionValueResponse(optionValue);
     }
 
-    public List<OptionValueResponse> getByOptionId(long optionId){
-        return optionValueRepository.findAllByOptionId(optionId).stream().map(optionValueMapper::toOptionValueResponse).toList();
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
+    public List<OptionValueResponse> getByOptionId(long optionId) {
+        return optionValueRepository.findAllByOptionId(optionId).stream()
+                .map(optionValueMapper::toOptionValueResponse)
+                .toList();
     }
 
-    public void delete(long id){
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void delete(long id) {
         optionValueRepository.deleteById(id);
     }
 }

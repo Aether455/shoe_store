@@ -1,11 +1,12 @@
 package com.nguyenkhang.mobile_store.mapper;
 
-import com.nguyenkhang.mobile_store.dto.request.AddressRequest;
-import com.nguyenkhang.mobile_store.dto.response.AddressResponse;
-import com.nguyenkhang.mobile_store.entity.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+
+import com.nguyenkhang.mobile_store.dto.request.AddressRequest;
+import com.nguyenkhang.mobile_store.dto.response.AddressResponse;
+import com.nguyenkhang.mobile_store.entity.Address;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
@@ -14,7 +15,6 @@ public interface AddressMapper {
 
     AddressResponse toAddressResponse(Address address);
 
-
-    @Mapping(target = "customer",ignore = true)
+    @Mapping(target = "customer", ignore = true)
     void updateAddress(@MappingTarget Address address, AddressRequest request);
 }

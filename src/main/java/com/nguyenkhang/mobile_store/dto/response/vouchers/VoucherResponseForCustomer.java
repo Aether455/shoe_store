@@ -1,12 +1,12 @@
 package com.nguyenkhang.mobile_store.dto.response.vouchers;
 
-import com.nguyenkhang.mobile_store.dto.response.user.UserResponse;
+import java.time.LocalDateTime;
+
 import com.nguyenkhang.mobile_store.enums.VoucherStatus;
 import com.nguyenkhang.mobile_store.enums.VoucherType;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -30,5 +30,4 @@ public class VoucherResponseForCustomer {
 
     LocalDateTime startDate;
     LocalDateTime endDate;
-
 }
