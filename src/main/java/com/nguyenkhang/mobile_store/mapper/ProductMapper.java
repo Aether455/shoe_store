@@ -1,15 +1,13 @@
 package com.nguyenkhang.mobile_store.mapper;
 
+import com.nguyenkhang.mobile_store.dto.response.product.*;
+import com.nguyenkhang.mobile_store.entity.ProductDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.nguyenkhang.mobile_store.dto.request.products.ProductAndVariantsCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductRequest;
-import com.nguyenkhang.mobile_store.dto.response.product.ProductResponse;
-import com.nguyenkhang.mobile_store.dto.response.product.ProductResponseForCustomer;
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.Product;
 
 @Mapper(componentModel = "spring")
@@ -26,6 +24,8 @@ public interface ProductMapper {
     ProductResponseForCustomer toProductResponseForCustomer(Product product);
 
     SimpleProductResponseForCustomer toSimpleProductResponseForCustomer(Product product);
+
+    SimpleProductSearchResponse toSimpleProductSearchResponse(ProductDocument document);
 
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "brand", ignore = true)

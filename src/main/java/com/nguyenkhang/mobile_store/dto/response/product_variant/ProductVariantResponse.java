@@ -19,8 +19,9 @@ public class ProductVariantResponse {
 
     Long id;
 
+    String sku;
+
     String productVariantImageUrl;
-    String imagePublicId;
 
     Set<SimpleOptionValueResponse> optionValues;
 

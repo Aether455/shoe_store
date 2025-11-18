@@ -1,5 +1,6 @@
 package com.nguyenkhang.mobile_store.controller.user;
 
+import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductSearchResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +58,15 @@ public class UserProductController {
             @RequestParam(defaultValue = "id") String sortBy) {
         return ApiResponse.<Page<SimpleProductResponseForCustomer>>builder()
                 .result(productService.getProductsByBrand(brandId, page, size, sortBy))
+                .build();
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<Page<SimpleProductSearchResponse>> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "20") int page) {
+        return ApiResponse.<Page<SimpleProductSearchResponse>>builder()
+                .result(productService.searchProducts(keyword,page))
                 .build();
     }
 }

@@ -4,8 +4,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.nguyenkhang.mobile_store.dto.response.product.*;
+import com.nguyenkhang.mobile_store.repository.*;
+import com.nguyenkhang.mobile_store.repository.ProductDocumentRepository;
+import com.nguyenkhang.mobile_store.specification.ProductSpecification;
 import jakarta.persistence.EntityManager;
-import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -19,16 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductAndVariantsCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductRequest;
 import com.nguyenkhang.mobile_store.dto.response.UploadFileCloudinaryResponse;
-import com.nguyenkhang.mobile_store.dto.response.product.ProductResponse;
-import com.nguyenkhang.mobile_store.dto.response.product.ProductResponseForCustomer;
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.*;
 import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;
 import com.nguyenkhang.mobile_store.mapper.ProductMapper;
 import com.nguyenkhang.mobile_store.mapper.ProductVariantMapper;
-import com.nguyenkhang.mobile_store.repository.*;
 import com.nguyenkhang.mobile_store.utils.VariantUtils;
 
 import lombok.AccessLevel;
@@ -45,6 +43,7 @@ public class ProductService {
     ProductRepository productRepository;
     ProductVariantRepository productVariantRepository;
     OptionValueRepository optionValueRepository;
+    ProductDocumentRepository productDocumentRepository;
 
     ProductVariantMapper variantMapper;
     CategoryRepository categoryRepository;
@@ -233,5 +232,65 @@ public class ProductService {
         }
 
         cloudinaryService.safeDelete(mainImageId, CLOUDINARY_FOLDER, ErrorCode.IMAGE_DELETE_FAIL);
+    }
+
+    public Page<SimpleProductSearchResponse> searchProducts(String keyword, int page){
+        Pageable pageable = PageRequest.of(page, 20);
+
+        var productDocuments = productDocumentRepository.searchByMultiMatch(keyword, pageable);
+
+
+        return productDocuments.map(productMapper::toSimpleProductSearchResponse);
+    }
+
+    public Page<SimpleProductResponse> searchProductsForAdmin(ProductSearchCriteria criteria, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+
+        var spec = ProductSpecification.withCriteria(criteria);
+
+        var products = productRepository.findAll(spec,pageable);
+
+
+        return products.map(productMapper::toSimpleProductResponse);
+    }
+
+    ProductDocument mapToDocument(Product product){
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        var variants = product.getProductVariants();
+
+        if (variants != null && !variants.isEmpty()){
+            minPrice = product.getProductVariants().stream().mapToDouble(ProductVariant::getPrice).min().getAsDouble();
+            maxPrice = product.getProductVariants().stream().mapToDouble(ProductVariant::getPrice).max().getAsDouble();
+        }
+
+        List<String> attributes = variants.stream()
+                .flatMap(productVariant -> productVariant.getOptionValues()
+                .stream()).map(OptionValue::getValue)
+                .distinct()
+                .toList();
+
+        return ProductDocument.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .mainImageUrl(product.getMainImageUrl())
+                .brandName(product.getBrand() != null ? product.getBrand().getName() : null)
+                .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .variantAttributes(attributes)
+                .build();
+    }
+
+
+    public void syncProductToElasticSearch(Product product){
+        ProductDocument document = mapToDocument(product);
+        productDocumentRepository.save(document);
+    }
+
+    public void removeProductFromElastic (Long productId){
+        productDocumentRepository.deleteById(productId);
     }
 }

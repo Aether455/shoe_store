@@ -19,7 +19,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-#
+
+  elasticsearch:
+    uris: "http://localhost:9200"
 #logging:
 #  level:
 #    org:

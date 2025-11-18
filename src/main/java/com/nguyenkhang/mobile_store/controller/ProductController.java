@@ -1,5 +1,7 @@
 package com.nguyenkhang.mobile_store.controller;
 
+import com.nguyenkhang.mobile_store.dto.response.product.ProductSearchCriteria;
+import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductSearchResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -44,6 +46,17 @@ public class ProductController {
             @RequestParam(defaultValue = "id") String sortBy) {
         return ApiResponse.<Page<SimpleProductResponse>>builder()
                 .result(productService.getProducts(page, size, sortBy))
+                .build();
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<Page<SimpleProductResponse>> searchProducts(
+            ProductSearchCriteria criteria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return ApiResponse.<Page<SimpleProductResponse>>builder()
+                .result(productService.searchProductsForAdmin(criteria,page,size))
                 .build();
     }
 
