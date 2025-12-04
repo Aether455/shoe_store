@@ -3,8 +3,8 @@ package com.nguyenkhang.mobile_store.dto.response.order;
 import java.time.LocalDateTime;
 
 import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
-
 import com.nguyenkhang.mobile_store.enums.OrderStatus;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,7 +23,9 @@ public class SimpleOrderResponse {
     String phoneNumber;
 
     String shippingAddress;
-
+    String province;
+    String district;
+    String ward;
     OrderStatus status;
 
     String note;

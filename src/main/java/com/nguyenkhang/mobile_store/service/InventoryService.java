@@ -1,10 +1,5 @@
 package com.nguyenkhang.mobile_store.service;
 
-import com.nguyenkhang.mobile_store.dto.request.InventoryCriteria;
-import com.nguyenkhang.mobile_store.dto.request.products.ProductSearchCriteria;
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
-import com.nguyenkhang.mobile_store.specification.InventorySpecification;
-import com.nguyenkhang.mobile_store.specification.ProductSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,11 +7,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import com.nguyenkhang.mobile_store.dto.request.InventoryCriteria;
 import com.nguyenkhang.mobile_store.dto.response.InventoryResponse;
 import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;
 import com.nguyenkhang.mobile_store.mapper.InventoryMapper;
 import com.nguyenkhang.mobile_store.repository.InventoryRepository;
+import com.nguyenkhang.mobile_store.specification.InventorySpecification;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -45,13 +42,12 @@ public class InventoryService {
         return inventoryMapper.toInventoryResponse(inventory);
     }
 
-    public Page<InventoryResponse> search(InventoryCriteria criteria, int page, int size){
+    public Page<InventoryResponse> search(InventoryCriteria criteria, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         var spec = InventorySpecification.createSpecification(criteria);
 
-        var products = inventoryRepository.findAll(spec,pageable);
-
+        var products = inventoryRepository.findAll(spec, pageable);
 
         return products.map(inventoryMapper::toInventoryResponse);
     }

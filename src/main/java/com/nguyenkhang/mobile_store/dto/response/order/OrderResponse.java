@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.nguyenkhang.mobile_store.dto.response.SimpleWarehouseResponse;
-import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
 import com.nguyenkhang.mobile_store.dto.response.customer.SimpleCustomerResponse;
 import com.nguyenkhang.mobile_store.dto.response.payment.PaymentResponse;
 import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
@@ -27,6 +26,11 @@ public class OrderResponse {
     String orderCode;
     String receiverName;
     String shippingAddress;
+
+    String province;
+    String district;
+    String ward;
+
     String phoneNumber;
     OrderStatus status;
     String note;

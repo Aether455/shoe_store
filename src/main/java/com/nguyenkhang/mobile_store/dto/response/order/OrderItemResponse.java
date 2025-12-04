@@ -1,9 +1,8 @@
 package com.nguyenkhang.mobile_store.dto.response.order;
 
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponseForUsing;
 import jakarta.persistence.*;
 
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
+import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponseForUsing;
 import com.nguyenkhang.mobile_store.dto.response.product_variant.SimpleProductVariantResponse;
 
 import lombok.*;

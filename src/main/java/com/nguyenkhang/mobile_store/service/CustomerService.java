@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +52,7 @@ public class CustomerService {
             throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
         }
 
-        User userCreate =userService.getCurrentUser();
+        User userCreate = userService.getCurrentUser();
 
         var customer = customerMapper.toCustomer(request);
 
@@ -76,7 +75,7 @@ public class CustomerService {
     // admin & nv
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public Page<CustomerResponse> getALl(int page, int size, String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         var customers = customerRepository.findAll(pageable);
 
         return customers.map(customerMapper::toCustomerResponse);

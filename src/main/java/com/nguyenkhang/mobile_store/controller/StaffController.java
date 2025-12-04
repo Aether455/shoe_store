@@ -1,11 +1,11 @@
 package com.nguyenkhang.mobile_store.controller;
 
-import com.nguyenkhang.mobile_store.dto.request.StaffUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponse;
 import com.nguyenkhang.mobile_store.dto.request.StaffRequest;
+import com.nguyenkhang.mobile_store.dto.request.StaffUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.StaffResponse;
 import com.nguyenkhang.mobile_store.service.StaffService;
 
@@ -20,12 +20,10 @@ import lombok.experimental.FieldDefaults;
 public class StaffController {
     StaffService staffService;
 
-    @PostMapping //bỏ qua
+    @PostMapping // bỏ qua
     public ApiResponse<StaffResponse> create(@RequestBody StaffRequest request) {
         var response = staffService.create(request);
-        return ApiResponse.<StaffResponse>builder()
-                .result(response)
-                .build();
+        return ApiResponse.<StaffResponse>builder().result(response).build();
     }
 
     @GetMapping
@@ -34,33 +32,25 @@ public class StaffController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
         var response = staffService.getStaffs(page, size, sortBy);
-        return ApiResponse.<Page<StaffResponse>>builder()
-                .result(response)
-                .build();
+        return ApiResponse.<Page<StaffResponse>>builder().result(response).build();
     }
 
     @GetMapping("/{staffId}")
     public ApiResponse<StaffResponse> getById(@PathVariable long staffId) {
         var response = staffService.getStaffById(staffId);
-        return ApiResponse.<StaffResponse>builder()
-                .result(response)
-                .build();
+        return ApiResponse.<StaffResponse>builder().result(response).build();
     }
 
     @PutMapping("/{staffId}")
     public ApiResponse<StaffResponse> update(@PathVariable long staffId, @RequestBody StaffUpdateRequest request) {
         var response = staffService.update(staffId, request);
-        return ApiResponse.<StaffResponse>builder()
-                .result(response)
-                .build();
+        return ApiResponse.<StaffResponse>builder().result(response).build();
     }
 
     @DeleteMapping("/{staffId}")
     public ApiResponse<String> delete(@PathVariable long staffId) {
         staffService.delete(staffId);
-        return ApiResponse.<String>builder()
-                .result("Staff has been deleted")
-                .build();
+        return ApiResponse.<String>builder().result("Staff has been deleted").build();
     }
 
     @GetMapping("/search")
@@ -69,7 +59,7 @@ public class StaffController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam String keyword) {
         return ApiResponse.<Page<StaffResponse>>builder()
-                .result(staffService.searchStaffs(keyword, page,size))
+                .result(staffService.searchStaffs(keyword, page, size))
                 .build();
     }
 }

@@ -1,13 +1,15 @@
 package com.nguyenkhang.mobile_store.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Id;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -31,11 +33,13 @@ public class ProductDocument {
 
     @Field(type = FieldType.Keyword)
     String brandName;
+
     @Field(type = FieldType.Keyword)
     String categoryName;
 
     @Field(type = FieldType.Double)
     Double minPrice;
+
     @Field(type = FieldType.Double)
     Double maxPrice;
 

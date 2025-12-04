@@ -28,7 +28,6 @@ public class StaffRequest {
     @NotBlank(message = "GENDER_REQUIRED")
     String gender;
 
-
     @NotNull(message = "POSITION_NOT_EMPTY")
     String position;
 

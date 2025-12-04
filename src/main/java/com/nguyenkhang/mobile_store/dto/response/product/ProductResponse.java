@@ -3,9 +3,7 @@ package com.nguyenkhang.mobile_store.dto.response.product;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.nguyenkhang.mobile_store.dto.response.brand.BrandResponse;
 import com.nguyenkhang.mobile_store.dto.response.brand.SimpleBrandResponse;
-import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponse;
 import com.nguyenkhang.mobile_store.dto.response.category.SimpleCategoryResponse;
 import com.nguyenkhang.mobile_store.dto.response.product_variant.ProductVariantResponse;
 import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;

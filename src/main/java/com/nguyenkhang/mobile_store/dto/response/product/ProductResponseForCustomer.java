@@ -2,9 +2,9 @@ package com.nguyenkhang.mobile_store.dto.response.product;
 
 import java.util.List;
 
-import com.nguyenkhang.mobile_store.dto.response.brand.BrandResponse;
-import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponse;
-import com.nguyenkhang.mobile_store.dto.response.product_variant.ProductVariantResponse;
+import com.nguyenkhang.mobile_store.dto.response.brand.SimpleBrandResponse;
+import com.nguyenkhang.mobile_store.dto.response.category.SimpleCategoryResponse;
+import com.nguyenkhang.mobile_store.dto.response.product_variant.ProductVariantResponseForCustomer;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,9 +25,9 @@ public class ProductResponseForCustomer {
 
     String mainImageUrl;
 
-    List<ProductVariantResponse> productVariants;
+    List<ProductVariantResponseForCustomer> productVariants;
 
-    CategoryResponse category;
+    SimpleCategoryResponse category;
 
-    BrandResponse brand;
+    SimpleBrandResponse brand;
 }

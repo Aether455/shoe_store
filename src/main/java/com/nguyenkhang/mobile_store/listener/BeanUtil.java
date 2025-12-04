@@ -1,15 +1,17 @@
 package com.nguyenkhang.mobile_store.listener;
 
-import com.nguyenkhang.mobile_store.service.ProductService;
 import jakarta.annotation.PostConstruct;
+
+import org.springframework.stereotype.Component;
+
+import com.nguyenkhang.mobile_store.service.ProductService;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import org.springframework.stereotype.Component;
-
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Component
 public class BeanUtil {
 
@@ -22,13 +24,8 @@ public class BeanUtil {
         return instance.productService;
     }
 
-
-
     @PostConstruct
-    public void registerInstance(){
-        instance=this;
+    public void registerInstance() {
+        instance = this;
     }
-
-
-
 }

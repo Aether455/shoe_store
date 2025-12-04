@@ -1,6 +1,5 @@
 package com.nguyenkhang.mobile_store.dto.response;
 
-import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

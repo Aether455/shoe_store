@@ -1,13 +1,12 @@
 package com.nguyenkhang.mobile_store.service;
 
-import com.nguyenkhang.mobile_store.dto.request.StaffUpdateRequest;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nguyenkhang.mobile_store.dto.request.StaffRequest;
+import com.nguyenkhang.mobile_store.dto.request.StaffUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.StaffResponse;
 import com.nguyenkhang.mobile_store.entity.Staff;
 import com.nguyenkhang.mobile_store.entity.User;
@@ -83,7 +82,7 @@ public class StaffService {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public Page<StaffResponse> searchStaffs(String keyword, int page,int size) {
+    public Page<StaffResponse> searchStaffs(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return staffRepository
                 .findAll(StaffSpecification.createSpecification(keyword), pageable)

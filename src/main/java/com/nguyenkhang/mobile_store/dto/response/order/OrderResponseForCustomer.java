@@ -3,9 +3,8 @@ package com.nguyenkhang.mobile_store.dto.response.order;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
 import com.nguyenkhang.mobile_store.dto.response.payment.PaymentResponse;
-import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponse;
+import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponseForCustomer;
 import com.nguyenkhang.mobile_store.enums.OrderStatus;
 
 import lombok.*;
@@ -24,6 +23,9 @@ public class OrderResponseForCustomer {
     String orderCode;
     String receiverName;
     String shippingAddress;
+    String province;
+    String district;
+    String ward;
     String phoneNumber;
     OrderStatus status;
     String note;
@@ -31,13 +33,10 @@ public class OrderResponseForCustomer {
     double totalAmount;
     double finalAmount;
 
-    VoucherResponse voucher;
-    CustomerResponse customer;
+    VoucherResponseForCustomer voucher;
 
     List<OrderItemResponse> orderItems;
     PaymentResponse payment;
-
-    List<OrderStatusHistoryResponse> orderStatusHistories;
 
     LocalDateTime createAt;
 }

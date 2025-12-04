@@ -11,7 +11,6 @@ import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateStatusRequest;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponse;
-import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponseForCustomer;
 import com.nguyenkhang.mobile_store.service.OrderService;
 
 import lombok.AccessLevel;
@@ -66,7 +65,9 @@ public class OrderController {
 
     @GetMapping("/search")
     public ApiResponse<Page<SimpleOrderResponse>> searchOrders(
-            @RequestParam(defaultValue = "0") int page, @RequestParam String keyword, @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.<Page<SimpleOrderResponse>>builder()
                 .result(orderService.searchOrders(keyword, page, size))
                 .build();

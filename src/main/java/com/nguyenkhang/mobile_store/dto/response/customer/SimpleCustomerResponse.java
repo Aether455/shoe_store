@@ -1,12 +1,7 @@
 package com.nguyenkhang.mobile_store.dto.response.customer;
 
-import com.nguyenkhang.mobile_store.dto.response.AddressResponse;
-import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -21,5 +16,4 @@ public class SimpleCustomerResponse {
     String fullName;
 
     String phoneNumber;
-
 }

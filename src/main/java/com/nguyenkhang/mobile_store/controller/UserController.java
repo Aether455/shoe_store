@@ -1,15 +1,13 @@
 package com.nguyenkhang.mobile_store.controller;
 
-import java.util.List;
-
-import com.nguyenkhang.mobile_store.dto.request.user.*;
-import com.nguyenkhang.mobile_store.dto.response.user.*;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.request.user.*;
+import com.nguyenkhang.mobile_store.dto.response.user.*;
 import com.nguyenkhang.mobile_store.service.UserService;
 
 import lombok.AccessLevel;
@@ -31,7 +29,7 @@ public class UserController {
                 .build();
     }
 
-    @PostMapping("/customers")/// dành cho khách hàng
+    @PostMapping("/customers") // dành cho customer
     public ApiResponse<UserResponseForCustomer> createUserForCustomer(
             @RequestBody @Valid UserCreationRequestForCustomer request) {
 
@@ -40,9 +38,8 @@ public class UserController {
                 .build();
     }
 
-    @PostMapping("/staffs") //dành cho trang quản lý nhân viên
-    public ApiResponse<UserResponse> createUserForStaff(
-            @RequestBody @Valid UserCreationRequestForStaff request) {
+    @PostMapping("/staffs") // dành cho trang quản lý nhân viên
+    public ApiResponse<UserResponse> createUserForStaff(@RequestBody @Valid UserCreationRequestForStaff request) {
 
         return ApiResponse.<UserResponse>builder()
                 .result(userService.createUserForStaff(request))
@@ -50,15 +47,16 @@ public class UserController {
     }
 
     @GetMapping
-    public ApiResponse<Page<UserResponse>> getUsers( @RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "10") int size,
-                                                     @RequestParam(defaultValue = "id") String sortBy) {
+    public ApiResponse<Page<UserResponse>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
         return ApiResponse.<Page<UserResponse>>builder()
                 .result(userService.getUsers(page, size, sortBy))
                 .build();
     }
 
-    @GetMapping("/{userId}")//detail
+    @GetMapping("/{userId}") // detail
     public ApiResponse<UserResponse> getUserById(@PathVariable("userId") long userId) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getUserById(userId))
@@ -77,13 +75,11 @@ public class UserController {
     @DeleteMapping("/{userId}")
     ApiResponse<String> deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
-        return ApiResponse.<String>builder()
-                .result("User has been deleted")
-                .build();
+        return ApiResponse.<String>builder().result("User has been deleted").build();
     }
 
     @PutMapping("/change-password")
-    ApiResponse<SimpleUserResponse> changePassword(@RequestBody UserChangePasswordRequest request){
+    ApiResponse<SimpleUserResponse> changePassword(@RequestBody UserChangePasswordRequest request) {
         return ApiResponse.<SimpleUserResponse>builder()
                 .result(userService.changePassword(request))
                 .build();
@@ -97,11 +93,10 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me") // dành cho customer
     public ApiResponse<SimpleUserInfoResponse> getMyInfo() {
         return ApiResponse.<SimpleUserInfoResponse>builder()
                 .result(userService.getMyInfo())
                 .build();
     }
-
 }

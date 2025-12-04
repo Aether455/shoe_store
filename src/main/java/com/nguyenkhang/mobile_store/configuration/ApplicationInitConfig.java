@@ -27,11 +27,10 @@ public class ApplicationInitConfig {
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
 
-
         return args -> {
-            for (Role roleEnum:Role.values()){
+            for (Role roleEnum : Role.values()) {
                 String roleName = roleEnum.name();
-                if(!roleRepository.existsById(roleName)){
+                if (!roleRepository.existsById(roleName)) {
                     var role = com.nguyenkhang.mobile_store.entity.Role.builder()
                             .name(roleName)
                             .description("Default description for " + roleName)
@@ -57,9 +56,6 @@ public class ApplicationInitConfig {
                 log.warn(
                         "Admin user has been created with default password: admin and email: admin@gmail.com, please change it!");
             }
-
-
-
         };
     }
 }

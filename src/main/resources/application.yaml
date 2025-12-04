@@ -5,10 +5,10 @@ server:
 
 spring:
   datasource:
-    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/store_db}
+    url: ${DBMS_CONNECTION}
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: ${DBMS_USERNAME:root}
-    password: ${DBMS_PASSWORD:root}
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,7 +20,7 @@ spring:
       max-request-size: 10MB
 
   elasticsearch:
-    uris: "http://localhost:9200"
+    uris: ${ELASTICSEARCH_DBMS_CONNECTION}
 #logging:
 #  level:
 #    org:
@@ -32,12 +32,12 @@ spring:
 
 
 jwt:
-  signerKey: "EIwK/6lmzSXatXSxFFgzVW+NxTt2a6kRGORp23UiIvjpVkbI6fkFLCeTvIEdRUwM"
-  valid-duration: 3600 #in seconds
-  refreshable-duration: 360000 #in seconds
+  signerKey: ${JWT_SIGNER_KEY}
+  valid-duration: ${JWT_VALID_DURATION} #in seconds
+  refreshable-duration: ${REFRESHABLE_DURATION} #in seconds
 
 cloudinary:
-  cloud_name: "dyedoswp3"
-  api_key: "189699368184473"
-  api_secret: "_LI-sp9EDcO2NP_za3sqWm0sD6M"
+  cloud_name: ${CLOUDINARY_CLOUD_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
 

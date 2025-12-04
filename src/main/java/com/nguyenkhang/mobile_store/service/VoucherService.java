@@ -1,7 +1,5 @@
 package com.nguyenkhang.mobile_store.service;
 
-import java.util.List;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

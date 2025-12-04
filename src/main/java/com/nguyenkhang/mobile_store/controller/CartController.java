@@ -54,8 +54,6 @@ public class CartController {
     @DeleteMapping("/clear")
     ApiResponse<String> clearMyCart() {
         cartService.clearMyCart();
-        return ApiResponse.<String>builder()
-                .result("Cart has been deleted")
-                .build();
+        return ApiResponse.<String>builder().result("Cart has been deleted").build();
     }
 }

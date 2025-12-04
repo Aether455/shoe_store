@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityManager;
+
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +44,6 @@ public class ProductVariantService {
 
     CloudinaryService cloudinaryService;
     String CLOUDINARY_FOLDER = "products/variants";
-
-
-
 
     EntityManager entityManager;
 
@@ -135,10 +133,10 @@ public class ProductVariantService {
 
         String imagePublicId = variant.getImagePublicId();
 
-        try{
+        try {
             variantRepository.delete(variant);
             entityManager.flush();
-        }catch (ConstraintViolationException exception){
+        } catch (ConstraintViolationException exception) {
             throw new AppException(ErrorCode.VARIANT_CAN_NOT_DELETE);
         }
 

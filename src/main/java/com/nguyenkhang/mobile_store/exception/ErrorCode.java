@@ -79,12 +79,10 @@ public enum ErrorCode {
     VARIANT_CAN_NOT_DELETE(1116, "Product variant can not delete!", HttpStatus.BAD_REQUEST),
     PRODUCT_CAN_NOT_DELETE(1116, "Product can not delete!", HttpStatus.BAD_REQUEST),
 
-
     PRODUCT_REQUIRED(1509, "Product is required!", HttpStatus.BAD_REQUEST),
     PRODUCT_VARIANT_REQUIRED(1508, "Product variant is required!", HttpStatus.BAD_REQUEST),
     VARIANT_IMAGE_FILE_REQUIRED(1508, "Variant image is required!", HttpStatus.BAD_REQUEST),
     MAIN_IMAGE_FILE_REQUIRED(1508, "Product main image is required!", HttpStatus.BAD_REQUEST),
-
 
     PRODUCT_PRICE_INVALID(1509, "Product variant price must be a number and greater than 0!", HttpStatus.BAD_REQUEST),
     PRODUCT_PRICE_REQUIRED(1509, "Product variant price is required!", HttpStatus.BAD_REQUEST),
@@ -128,7 +126,6 @@ public enum ErrorCode {
 
     ORDER_ALREADY_CANCELED(6885, "Order has already been canceled!", HttpStatus.BAD_REQUEST),
     DUPLICATE_ORDER_STATUS(4574, "Cannot update duplicate status!", HttpStatus.BAD_REQUEST),
-
 
     INSUFFICIENT_STOCK(6346, "Insufficient inventory! ", HttpStatus.BAD_REQUEST),
     ORDER_COORDINATES_MISSING(6885, "Missing delivery coordinates!", HttpStatus.BAD_REQUEST),

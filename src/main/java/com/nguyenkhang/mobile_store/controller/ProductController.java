@@ -1,6 +1,5 @@
 package com.nguyenkhang.mobile_store.controller;
 
-import com.nguyenkhang.mobile_store.dto.request.products.ProductSearchCriteria;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.nguyenkhang.mobile_store.dto.ApiResponse;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductAndVariantsCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductRequest;
+import com.nguyenkhang.mobile_store.dto.request.products.ProductSearchCriteria;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductVariantUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.VariantCreationOneRequest;
 import com.nguyenkhang.mobile_store.dto.response.product.ProductResponse;
@@ -52,10 +52,9 @@ public class ProductController {
     public ApiResponse<Page<SimpleProductResponse>> searchProducts(
             ProductSearchCriteria criteria,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
-    ) {
+            @RequestParam(defaultValue = "20") int size) {
         return ApiResponse.<Page<SimpleProductResponse>>builder()
-                .result(productService.searchProductsForAdmin(criteria,page,size))
+                .result(productService.searchProductsForAdmin(criteria, page, size))
                 .build();
     }
 

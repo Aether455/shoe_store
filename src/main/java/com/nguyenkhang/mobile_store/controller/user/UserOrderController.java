@@ -1,20 +1,21 @@
 package com.nguyenkhang.mobile_store.controller.user;
 
+import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+
 import com.nguyenkhang.mobile_store.dto.ApiResponse;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateRequest;
-import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateStatusRequest;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponseForCustomer;
-import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponseForCustomer;
 import com.nguyenkhang.mobile_store.service.OrderService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user/orders")
@@ -29,7 +30,6 @@ public class UserOrderController {
                 .result(orderService.createOrder(request))
                 .build();
     }
-
 
     @GetMapping("/{id}")
     public ApiResponse<OrderResponseForCustomer> getOrderById(@PathVariable long id) {
@@ -68,5 +68,4 @@ public class UserOrderController {
                 .result(orderService.getMyOrders(page, size, sortBy))
                 .build();
     }
-
 }

@@ -16,7 +16,8 @@ public class InventoryTransactionSpecification {
 
             String likePattern = "%" + keyword + "%";
 
-            Join<InventoryTransaction, User> userJoin = root.join("createBy", jakarta.persistence.criteria.JoinType.LEFT);
+            Join<InventoryTransaction, User> userJoin =
+                    root.join("createBy", jakarta.persistence.criteria.JoinType.LEFT);
             Join<InventoryTransaction, Product> productJoin = root.join("product", JoinType.LEFT);
             Join<InventoryTransaction, Warehouse> warehouseJoin = root.join("warehouse", JoinType.LEFT);
 

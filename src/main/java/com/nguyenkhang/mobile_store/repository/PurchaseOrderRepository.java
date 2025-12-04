@@ -51,11 +51,11 @@ public interface PurchaseOrderRepository
             """
 			SELECT new com.nguyenkhang.mobile_store.dto.response.purchase_order.PurchaseOrderReportResponse(
 			CONCAT('Q', QUARTER(po.createAt),'-',YEAR(po.createAt)),
-			SUM(po.totalAmount), 
+			SUM(po.totalAmount),
 			COUNT(po))
-			FROM PurchaseOrder po 
+			FROM PurchaseOrder po
 			WHERE po.status = 'APPROVED'
-			AND  po.createAt BETWEEN :start AND :end 
+			AND  po.createAt BETWEEN :start AND :end
 			GROUP BY YEAR(po.createAt), QUARTER(po.createAt) ,CONCAT('Q', QUARTER(po.createAt),'-',YEAR(po.createAt))\
 			ORDER BY YEAR(po.createAt), QUARTER(po.createAt)""")
     List<PurchaseOrderReportResponse> reportByQuarter(

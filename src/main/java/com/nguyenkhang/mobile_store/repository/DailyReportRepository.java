@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 import com.nguyenkhang.mobile_store.entity.DailyReport;
 
 @Repository
-public interface DailyReportRepository extends JpaRepository<DailyReport, Long>, JpaSpecificationExecutor<DailyReport> {}
+public interface DailyReportRepository
+        extends JpaRepository<DailyReport, Long>, JpaSpecificationExecutor<DailyReport> {}

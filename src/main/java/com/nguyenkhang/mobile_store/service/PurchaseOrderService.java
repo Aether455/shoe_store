@@ -336,7 +336,6 @@ public class PurchaseOrderService {
         };
     }
 
-
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public Page<SimplePurchaseOrderResponse> searchPurchaseOrder(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 20);

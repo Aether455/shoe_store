@@ -1,6 +1,5 @@
 package com.nguyenkhang.mobile_store.service;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +31,8 @@ public class CartService {
     UserService userService;
 
     public CartItemResponse addToCart(CartItemRequest cartItemRequest) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        User user = userService.getCurrentUser();
 
         var cart = cartRepository
                 .findByUserId(user.getId())
@@ -75,7 +74,12 @@ public class CartService {
                 .findByUserId(user.getId())
                 .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
 
-        return cartMapper.toCartResponse(cart);
+        var cartResponse = cartMapper.toCartResponse(cart);
+        var totalAmount = cartResponse.getCartItems().stream()
+                .mapToDouble(CartItemResponse::getTotalPrice)
+                .sum();
+        cartResponse.setTotalAmount(totalAmount);
+        return cartResponse;
     }
 
     public CartItemResponse updateQuantity(CartItemUpdateQuantityRequest request) {

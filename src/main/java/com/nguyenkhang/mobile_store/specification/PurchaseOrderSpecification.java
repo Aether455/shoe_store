@@ -17,7 +17,7 @@ public class PurchaseOrderSpecification {
             Join<PurchaseOrder, Supplier> supplierJoin = root.join("supplier", JoinType.LEFT);
             Join<PurchaseOrder, Warehouse> warehouseJoin = root.join("warehouse", JoinType.LEFT);
 
-            Predicate idLike = criteriaBuilder.like(root.get("id").as(String.class),likePattern);
+            Predicate idLike = criteriaBuilder.like(root.get("id").as(String.class), likePattern);
             Predicate supplierNameLike = criteriaBuilder.like(supplierJoin.get("name"), likePattern);
             Predicate warehouseNameLike = criteriaBuilder.like(warehouseJoin.get("name"), likePattern);
 

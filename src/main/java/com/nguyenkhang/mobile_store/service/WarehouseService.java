@@ -1,10 +1,7 @@
 package com.nguyenkhang.mobile_store.service;
 
-import com.nguyenkhang.mobile_store.dto.response.user.UserResponse;
-import com.nguyenkhang.mobile_store.specification.UserSpecification;
-import com.nguyenkhang.mobile_store.specification.WarehouseSpecification;
 import jakarta.persistence.EntityManager;
-import org.hibernate.exception.ConstraintViolationException;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +21,7 @@ import com.nguyenkhang.mobile_store.exception.ErrorCode;
 import com.nguyenkhang.mobile_store.mapper.WarehouseMapper;
 import com.nguyenkhang.mobile_store.repository.UserRepository;
 import com.nguyenkhang.mobile_store.repository.WarehouseRepository;
+import com.nguyenkhang.mobile_store.specification.WarehouseSpecification;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -118,7 +116,7 @@ public class WarehouseService {
         warehouseRepository.deleteById(id);
     }
 
-    public Page<WarehouseResponse> searchWarehouse(String keyword, int page,  int size) {
+    public Page<WarehouseResponse> searchWarehouse(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return warehouseRepository
                 .findAll(WarehouseSpecification.createSpecification(keyword), pageable)

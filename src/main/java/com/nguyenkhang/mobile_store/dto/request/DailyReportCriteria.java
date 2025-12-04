@@ -1,11 +1,10 @@
 package com.nguyenkhang.mobile_store.dto.request;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -20,8 +19,6 @@ public class DailyReportCriteria {
 
     BigDecimal avgOrderValueStart;
     BigDecimal avgOrderValueEnd;
-
-
 
     LocalDate reportDateStart;
     LocalDate reportDateEnd;

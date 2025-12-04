@@ -46,11 +46,11 @@ public class Voucher {
     LocalDateTime endDate;
 
     @ManyToOne
-    @JoinColumn(name = "create_by_user_id")
+    @JoinColumn(name = "create_by")
     User createBy;
 
     @ManyToOne
-    @JoinColumn(name = "update_by_user_id")
+    @JoinColumn(name = "update_by")
     User updateBy;
 
     @CreationTimestamp

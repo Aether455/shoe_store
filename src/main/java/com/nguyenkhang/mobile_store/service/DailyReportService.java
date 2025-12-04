@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.nguyenkhang.mobile_store.dto.request.DailyReportCriteria;
-import com.nguyenkhang.mobile_store.specification.DailyReportSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import com.nguyenkhang.mobile_store.dto.request.DailyReportCriteria;
 import com.nguyenkhang.mobile_store.dto.response.DailyReportResponse;
 import com.nguyenkhang.mobile_store.entity.DailyReport;
 import com.nguyenkhang.mobile_store.entity.Order;
@@ -28,6 +27,7 @@ import com.nguyenkhang.mobile_store.repository.CustomerRepository;
 import com.nguyenkhang.mobile_store.repository.DailyReportRepository;
 import com.nguyenkhang.mobile_store.repository.OrderItemRepository;
 import com.nguyenkhang.mobile_store.repository.OrderRepository;
+import com.nguyenkhang.mobile_store.specification.DailyReportSpecification;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

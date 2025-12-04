@@ -1,7 +1,5 @@
 package com.nguyenkhang.mobile_store.dto.request.products;
 
-import java.time.LocalDateTime;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,17 +9,11 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class ProductSearchCriteria {
+public class ProductFilterCriteria {
 
-    String productName;
     Long categoryId;
     Long brandId;
 
-    String sku;
     Double minPrice;
     Double maxPrice;
-    Integer minQuantity;
-
-    LocalDateTime createAtStart;
-    LocalDateTime createAtEnd;
 }

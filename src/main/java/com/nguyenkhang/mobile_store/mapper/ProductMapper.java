@@ -1,14 +1,14 @@
 package com.nguyenkhang.mobile_store.mapper;
 
-import com.nguyenkhang.mobile_store.dto.response.product.*;
-import com.nguyenkhang.mobile_store.entity.ProductDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.nguyenkhang.mobile_store.dto.request.products.ProductAndVariantsCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductRequest;
+import com.nguyenkhang.mobile_store.dto.response.product.*;
 import com.nguyenkhang.mobile_store.entity.Product;
+import com.nguyenkhang.mobile_store.entity.ProductDocument;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {

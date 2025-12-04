@@ -1,14 +1,8 @@
 package com.nguyenkhang.mobile_store.service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import com.nguyenkhang.mobile_store.dto.request.user.*;
-import com.nguyenkhang.mobile_store.dto.response.user.*;
-import com.nguyenkhang.mobile_store.repository.StaffRepository;
-import com.nguyenkhang.mobile_store.specification.WarehouseSpecification;
 import jakarta.persistence.EntityManager;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -23,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nguyenkhang.mobile_store.dto.request.user.*;
+import com.nguyenkhang.mobile_store.dto.response.user.*;
 import com.nguyenkhang.mobile_store.entity.Customer;
 import com.nguyenkhang.mobile_store.entity.Staff;
 import com.nguyenkhang.mobile_store.entity.User;
@@ -31,6 +27,7 @@ import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;
 import com.nguyenkhang.mobile_store.mapper.UserMapper;
 import com.nguyenkhang.mobile_store.repository.RoleRepository;
+import com.nguyenkhang.mobile_store.repository.StaffRepository;
 import com.nguyenkhang.mobile_store.repository.UserRepository;
 import com.nguyenkhang.mobile_store.specification.UserSpecification;
 
@@ -51,7 +48,6 @@ public class UserService {
     UserMapper userMapper;
 
     EntityManager entityManager;
-
 
     @Transactional
     public UserResponse createUser(UserCreationRequest request) {
@@ -109,8 +105,8 @@ public class UserService {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
-        if (staffRepository.existsByPhoneNumber(request.getPhoneNumber())){
-            throw  new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
+        if (staffRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
         }
         User user = userMapper.toUserForStaff(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -182,30 +178,30 @@ public class UserService {
         }
     }
 
-    public SimpleUserInfoResponse getMyInfo(){
+    public SimpleUserInfoResponse getMyInfo() {
         var currentUser = getCurrentUser();
 
         return userMapper.toSimpleUserInfoResponse(currentUser);
     }
 
     @Transactional
-    public SimpleUserResponse changePassword( UserChangePasswordRequest request){
+    public SimpleUserResponse changePassword(UserChangePasswordRequest request) {
         var currentUser = getCurrentUser();
 
-        var authenticated = passwordEncoder.matches(request.getPassword(),currentUser.getPassword());
+        var authenticated = passwordEncoder.matches(request.getPassword(), currentUser.getPassword());
 
-        if (!authenticated){
+        if (!authenticated) {
             throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
         }
         var validateNewPassword = request.getNewPassword().trim().equals(request.getConfirmationPassword());
 
-        if (!validateNewPassword){
+        if (!validateNewPassword) {
             throw new AppException(ErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
         }
 
         currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
-        currentUser =  userRepository.save(currentUser);
+        currentUser = userRepository.save(currentUser);
 
         return userMapper.toSimpleUserResponse(currentUser);
     }

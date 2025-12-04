@@ -34,7 +34,6 @@ public class InventoryTransactionService {
         return inventoryTransaction.map(inventoryTransactionMapper::toInventoryTransactionResponse);
     }
 
-
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public InventoryTransactionResponse getById(long id) {
         var inventoryTransaction = inventoryTransactionRepository

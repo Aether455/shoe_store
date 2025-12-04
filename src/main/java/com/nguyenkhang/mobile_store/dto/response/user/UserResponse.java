@@ -1,6 +1,5 @@
 package com.nguyenkhang.mobile_store.dto.response.user;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 

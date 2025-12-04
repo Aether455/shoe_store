@@ -1,15 +1,17 @@
 package com.nguyenkhang.mobile_store.specification;
 
-import com.nguyenkhang.mobile_store.dto.request.InventoryCriteria;
-import com.nguyenkhang.mobile_store.entity.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.nguyenkhang.mobile_store.dto.request.InventoryCriteria;
+import com.nguyenkhang.mobile_store.entity.*;
 
 public class InventorySpecification {
     public static Specification<Inventory> createSpecification(InventoryCriteria criteria) {
@@ -27,7 +29,6 @@ public class InventorySpecification {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createAt"), criteria.getCreateAtEnd()));
             }
 
-
             if (StringUtils.hasText(criteria.getKeyword())) {
                 String likePattern = "%" + criteria.getKeyword().toLowerCase() + "%";
                 List<Predicate> searchPredicates = new ArrayList<>();
@@ -38,10 +39,10 @@ public class InventorySpecification {
 
                 Join<ProductVariant, Product> productJoin = variantJoin.join("product", JoinType.LEFT);
 
-
                 searchPredicates.add(criteriaBuilder.like(root.get("id").as(String.class), likePattern));
 
-                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(warehouseJoin.get("name")), likePattern));
+                searchPredicates.add(
+                        criteriaBuilder.like(criteriaBuilder.lower(warehouseJoin.get("name")), likePattern));
 
                 searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(variantJoin.get("sku")), likePattern));
 

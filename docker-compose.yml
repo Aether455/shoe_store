@@ -23,18 +23,18 @@ services:
   # ==========================================
   # Service 2: Kibana
   # ==========================================
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.1
-    container_name: kibana-dev
-    environment:
-      # Gọi trực tiếp tên service 'elasticsearch' trong cùng network
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    networks:
-      - backend-network # Đã đổi sang network chung
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:8.11.1
+#    container_name: kibana-dev
+#    environment:
+#      # Gọi trực tiếp tên service 'elasticsearch' trong cùng network
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#    ports:
+#      - "5601:5601"
+#    depends_on:
+#      - elasticsearch
+#    networks:
+#      - backend-network # Đã đổi sang network chung
 
   # ==========================================
   # Service 3: MySQL (Mới thêm)
@@ -53,8 +53,8 @@ services:
     volumes:
       # Mount volume để giữ lại dữ liệu khi xóa container
       - mysql_data:/var/lib/mysql
-#    networks:
-#      - backend-network # Cùng network với ES và Kibana
+    networks:
+      - backend-network # Cùng network với ES và Kibana
 
 # ==========================================
 # Volumes (Lưu trữ dữ liệu)

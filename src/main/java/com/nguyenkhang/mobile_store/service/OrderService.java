@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.nguyenkhang.mobile_store.dto.response.order.OrderResponseForCustomer;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +23,7 @@ import com.nguyenkhang.mobile_store.dto.request.order.OrderItemRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateStatusRequest;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponse;
+import com.nguyenkhang.mobile_store.dto.response.order.OrderResponseForCustomer;
 import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.*;
@@ -62,10 +62,10 @@ public class OrderService {
 
     UserService userService;
     GeocodingService geocodingService;
+    CartService cartService;
 
-    @Transactional //  bỏ qua
+    @Transactional
     public OrderResponse createOrder(OrderCreationRequest request) {
-
 
         User user = userService.getCurrentUser();
 
@@ -132,6 +132,7 @@ public class OrderService {
 
         try {
             order = orderRepository.save(order);
+            cartService.clearMyCart();
         } catch (DataIntegrityViolationException e) {
             log.error("Error in create order: ", e);
             throw new AppException(ErrorCode.ORDER_CREATE_FAIL);
@@ -398,7 +399,7 @@ public class OrderService {
             throw new AppException(ErrorCode.ORDER_ALREADY_CANCELED);
         }
 
-        if (order.getStatus().equals(request.getOrderStatus())){
+        if (order.getStatus().equals(request.getOrderStatus())) {
             throw new AppException(ErrorCode.DUPLICATE_ORDER_STATUS);
         }
 

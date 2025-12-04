@@ -3,11 +3,12 @@ package com.nguyenkhang.mobile_store.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.nguyenkhang.mobile_store.listener.ProductEntityListener;
 import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.nguyenkhang.mobile_store.listener.ProductEntityListener;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

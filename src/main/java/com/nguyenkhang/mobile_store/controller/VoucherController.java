@@ -1,7 +1,5 @@
 package com.nguyenkhang.mobile_store.controller;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -24,11 +22,12 @@ public class VoucherController {
     VoucherService voucherService;
 
     @GetMapping
-    public ApiResponse<Page<VoucherResponse>> getVouchers( @RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @RequestParam(defaultValue = "id") String sortBy) {
+    public ApiResponse<Page<VoucherResponse>> getVouchers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
         return ApiResponse.<Page<VoucherResponse>>builder()
-                .result(voucherService.getVouchers(page,size,sortBy))
+                .result(voucherService.getVouchers(page, size, sortBy))
                 .build();
     }
 
@@ -57,9 +56,7 @@ public class VoucherController {
     @DeleteMapping("/{voucherId}")
     ApiResponse<String> delete(@PathVariable long voucherId) {
         voucherService.delete(voucherId);
-        return ApiResponse.<String>builder()
-                .result("Voucher has been deleted")
-                .build();
+        return ApiResponse.<String>builder().result("Voucher has been deleted").build();
     }
 
     @GetMapping("/search")
