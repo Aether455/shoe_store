@@ -35,6 +35,7 @@ public enum ErrorCode {
 
     BRAND_NAME_REQUIRED(1123, "Brand name is required!", HttpStatus.BAD_REQUEST),
     DESCRIPTION_REQUIRED(1501, "Description is required!", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_BRAND(43643, "Cannot delete this brand. This brand is linked to another", HttpStatus.CONFLICT),
 
     CATEGORY_NAME_REQUIRED(1123, "Category name is required!", HttpStatus.BAD_REQUEST),
 
@@ -43,6 +44,8 @@ public enum ErrorCode {
 
     CATEGORY_NOT_EXISTED(1125, "Category not existed!", HttpStatus.BAD_REQUEST),
     CATEGORY_EXISTED(1125, "Category already existed!", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_CATEGORY(
+            43643, "Cannot delete this category. This category is linked to another", HttpStatus.CONFLICT),
 
     VOUCHER_NAME_REQUIRED(1200, "Voucher name is required!", HttpStatus.BAD_REQUEST),
     VOUCHER_CODE_REQUIRED(1201, "Voucher code is required!", HttpStatus.BAD_REQUEST),
@@ -52,6 +55,8 @@ public enum ErrorCode {
     VOUCHER_END_DATE_INVALID(1205, "End date must be in the future!", HttpStatus.BAD_REQUEST),
     VOUCHER_EXISTED(1206, "Voucher already exists!", HttpStatus.BAD_REQUEST),
     VOUCHER_NOT_EXISTED(1207, "Voucher not existed!", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_VOUCHER_LINKED_ORDER(
+            43643, "Cannot delete voucher. This staff is linked to a order", HttpStatus.CONFLICT),
 
     POSITION_NOT_EMPTY(1300, "Position cannot be empty!", HttpStatus.BAD_REQUEST),
     HIRE_DATE_NOT_BLANK(1301, "Rental date cannot be blank!", HttpStatus.BAD_REQUEST),
@@ -60,11 +65,19 @@ public enum ErrorCode {
     USER_NOT_BLANK(1303, "User must not be left blank!", HttpStatus.BAD_REQUEST),
     STAFF_NOT_EXISTED(1303, "Staff not existed!", HttpStatus.BAD_REQUEST),
     GENDER_REQUIRED(1200, "Gender is required!", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_STAFF_LINKED_USER(
+            43643,
+            "Cannot delete staff. This staff is linked to a User account or active data. Please remove the User link first.",
+            HttpStatus.CONFLICT),
 
     ADDRESS_REQUIRED(1400, "Address is required!", HttpStatus.BAD_REQUEST),
+    ADDRESS_NOT_FOUND(1400, "Address not found! Please try again.!", HttpStatus.NOT_FOUND),
+
     CUSTOMER_ID_REQUIRED(1401, "Customer id is required!", HttpStatus.BAD_REQUEST),
     CUSTOMER_NOT_EXISTED(1402, "Customer not existed!", HttpStatus.BAD_REQUEST),
     FULL_NAME_REQUIRED(1402, "Full name is required!", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_CUSTOMER(
+            43643, "Cannot delete this customer. This customer is linked to another", HttpStatus.CONFLICT),
 
     PRODUCT_NAME_NOT_BLANK(1500, "Product name is required!", HttpStatus.BAD_REQUEST),
     PRODUCT_DESCRIPTION_NOT_BLANK(1501, "Product description is required!", HttpStatus.BAD_REQUEST),
@@ -101,6 +114,8 @@ public enum ErrorCode {
     OPTION_EXISTED(1700, "Option existed!", HttpStatus.BAD_REQUEST),
     OPTION_VALUE_EXISTED(1700, "Option value existed!", HttpStatus.BAD_REQUEST),
     OPTION_VALUE_NOT_EXISTED(1700, "Option value not existed!", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_OPTION_VALUE(43643, "Cannot delete this value. This value is linked to another", HttpStatus.CONFLICT),
+    CANNOT_DELETE_OPTION(43643, "Cannot delete this option. This option is linked to another", HttpStatus.CONFLICT),
 
     OPTION_VALUE_EMPTY(2282, "OptionValues cannot be empty for signature!", HttpStatus.BAD_REQUEST),
 
@@ -135,17 +150,23 @@ public enum ErrorCode {
     WAREHOUSE_NOT_FOUND(4653, "Warehouse not found! ", HttpStatus.BAD_REQUEST),
     WAREHOUSE_NAME_REQUIRED(9294, "Warehouse name is required!", HttpStatus.BAD_REQUEST),
     WAREHOUSE_PRIORITY_REQUIRED(9294, "Warehouse priority is required!", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_WAREHOUSE(43643, "Cannot delete Warehouse. This warehouse is linked to another", HttpStatus.CONFLICT),
     PRIORITY_ALREADY_EXISTED(9294, "Warehouse priority already existed!", HttpStatus.BAD_REQUEST),
 
     SUPPLIER_NAME_REQUIRED(3382, "Supplier name is required!", HttpStatus.BAD_REQUEST),
     SUPPLIER_NOT_EXISTED(4653, "Supplier not existed! ", HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_SUPPLIER_LINKED_PURCHASE_ORDER(
+            1006,
+            "Cannot delete supplier. This supplier is linked to a purchase order or active data",
+            HttpStatus.CONFLICT),
 
     PURCHASE_ORDER_NOT_EXISTED(4653, "Purchase order not existed! ", HttpStatus.BAD_REQUEST),
     STATUS_IS_NOT_CHANGE_TO_APPROVED(
             4653, "Purchase order status NOT change when status is APPROVED or CANCELLED!", HttpStatus.BAD_REQUEST),
     STATUS_IS_NOT_CHANGE_TO_CANCEL(
             4653, "Purchase order status NOT change when status is CANCELLED!", HttpStatus.BAD_REQUEST),
-    DELETE_FAIL(4653, "Purchase order can't delete when status is APPROVED or CANCELLED!", HttpStatus.BAD_REQUEST),
+    DELETE_FAIL_BY_STATUS(
+            4653, "Purchase order can't delete when status is APPROVED or CANCELLED!", HttpStatus.BAD_REQUEST),
 
     INVENTORY_NOT_EXISTED(4653, "Inventory not existed! ", HttpStatus.BAD_REQUEST),
     INVENTORY_TRANSACTION_NOT_EXISTED(4653, "Inventory transaction not existed! ", HttpStatus.BAD_REQUEST),

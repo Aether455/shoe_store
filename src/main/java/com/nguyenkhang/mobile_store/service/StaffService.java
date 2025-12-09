@@ -1,5 +1,6 @@
 package com.nguyenkhang.mobile_store.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,9 @@ import com.nguyenkhang.mobile_store.specification.StaffSpecification;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -91,6 +94,11 @@ public class StaffService {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long staffId) {
-        staffRepository.deleteById(staffId);
+
+        try {
+            staffRepository.deleteStaffByIdCustom(staffId);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.CANNOT_DELETE_STAFF_LINKED_USER);
+        }
     }
 }

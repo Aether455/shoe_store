@@ -67,6 +67,11 @@ public class CategoryService {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long id) {
-        categoryRepository.deleteById(id);
+        try {
+            categoryRepository.deleteById(id);
+
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.CANNOT_DELETE_CATEGORY);
+        }
     }
 }

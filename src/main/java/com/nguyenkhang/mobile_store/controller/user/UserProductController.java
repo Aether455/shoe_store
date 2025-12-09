@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import com.nguyenkhang.mobile_store.dto.ApiResponse;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductFilterCriteria;
 import com.nguyenkhang.mobile_store.dto.response.product.ProductResponseForCustomer;
-import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponse;
 import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponseForCustomer;
 import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductSearchResponse;
 import com.nguyenkhang.mobile_store.service.ProductService;
@@ -72,11 +71,11 @@ public class UserProductController {
     }
 
     @GetMapping("/filter")
-    public ApiResponse<Page<SimpleProductResponse>> filterProduct(
+    public ApiResponse<Page<SimpleProductResponseForCustomer>> filterProduct(
             ProductFilterCriteria criteria,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.<Page<SimpleProductResponse>>builder()
+        return ApiResponse.<Page<SimpleProductResponseForCustomer>>builder()
                 .result(productService.filterProduct(criteria, page, size))
                 .build();
     }

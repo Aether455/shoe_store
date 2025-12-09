@@ -2,6 +2,7 @@ package com.nguyenkhang.mobile_store.service;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +62,11 @@ public class BrandService {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long id) {
-        brandRepository.deleteById(id);
+        try {
+            brandRepository.deleteById(id);
+
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.CANNOT_DELETE_CATEGORY);
+        }
     }
 }

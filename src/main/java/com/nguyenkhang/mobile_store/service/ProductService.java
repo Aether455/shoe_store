@@ -244,14 +244,14 @@ public class ProductService {
         return productDocuments.map(productMapper::toSimpleProductSearchResponse);
     }
 
-    public Page<SimpleProductResponse> filterProduct(ProductFilterCriteria criteria, int page, int size) {
+    public Page<SimpleProductResponseForCustomer> filterProduct(ProductFilterCriteria criteria, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         var spec = ProductSpecification.filterProduct(criteria);
 
         var products = productRepository.findAll(spec, pageable);
 
-        return products.map(productMapper::toSimpleProductResponse);
+        return products.map(productMapper::toSimpleProductResponseForCustomer);
     }
 
     public Page<SimpleProductResponse> searchProductsForAdmin(ProductSearchCriteria criteria, int page, int size) {

@@ -1,73 +1,56 @@
 version: '3.8'
 
 services:
-  # ==========================================
-  # Service 1: Elasticsearch
-  # ==========================================
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
-    container_name: es_dev
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      # Giới hạn RAM cho máy yếu (512MB)
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    networks:
-      - backend-network # Đã đổi sang network chung
-
-  # ==========================================
-  # Service 2: Kibana
-  # ==========================================
-#  kibana:
-#    image: docker.elastic.co/kibana/kibana:8.11.1
-#    container_name: kibana-dev
-#    environment:
-#      # Gọi trực tiếp tên service 'elasticsearch' trong cùng network
-#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-#    ports:
-#      - "5601:5601"
-#    depends_on:
-#      - elasticsearch
-#    networks:
-#      - backend-network # Đã đổi sang network chung
-
-  # ==========================================
-  # Service 3: MySQL (Mới thêm)
-  # ==========================================
-  mysql:
+  # MySQL
+  mysqldb:
     image: mysql:8.0
-    container_name: mysql80
-    # Tự động khởi động lại nếu container bị lỗi
     restart: always
     environment:
-      # Mật khẩu root (Thay đổi nếu cần)
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: store_db
-    ports:
-      - "3306:3306"
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
-      # Mount volume để giữ lại dữ liệu khi xóa container
-      - mysql_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
     networks:
-      - backend-network # Cùng network với ES và Kibana
+      - app-network
+    command: --default-authentication-plugin=mysql_native_password
 
-# ==========================================
-# Volumes (Lưu trữ dữ liệu)
-# ==========================================
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g" # Server 8GB RAM nên cho ES hẳn 1GB
+      - xpack.security.enabled=false
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - app-network
+    ports:
+      - "9200:9200"
+
+  # Spring Boot App
+  backend:
+    build: .
+    restart: always
+    depends_on:
+      - mysqldb
+      - elasticsearch
+    env_file: .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      # Cấu hình host ES trỏ vào tên service
+      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
 volumes:
-  esdata:
-    driver: local
-  mysql_data: # Volume mới cho MySQL
-    driver: local
+  db_data:
+  es_data:
 
-# ==========================================
-# Networks (Mạng nội bộ Docker)
-# ==========================================
 networks:
-  backend-network:
+  app-network:
     driver: bridge

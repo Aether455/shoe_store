@@ -28,6 +28,7 @@ public class PaymentService {
                 paymentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_EXISTED));
         payment.setStatus(request.getStatus());
 
+        payment = paymentRepository.save(payment);
         return paymentMapper.toPaymentResponse(payment);
     }
 }

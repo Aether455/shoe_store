@@ -114,6 +114,11 @@ public class WarehouseService {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long id) {
         warehouseRepository.deleteById(id);
+        try {
+            warehouseRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.CANNOT_DELETE_WAREHOUSE);
+        }
     }
 
     public Page<WarehouseResponse> searchWarehouse(String keyword, int page, int size) {

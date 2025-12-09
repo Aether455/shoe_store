@@ -12,6 +12,5 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PaymentUpdateRequest {
-    long orderId;
     PaymentStatus status;
 }

@@ -96,7 +96,11 @@ public class VoucherService {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long voucherId) {
-        voucherRepository.deleteById(voucherId);
+        try {
+            voucherRepository.deleteById(voucherId);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.CANNOT_DELETE_VOUCHER_LINKED_ORDER);
+        }
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")

@@ -317,7 +317,7 @@ public class PurchaseOrderService {
                 .findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PURCHASE_ORDER_NOT_EXISTED));
         if (!purchaseOrder.getStatus().equals(PurchaseOrderStatus.DRAFT)) {
-            throw new AppException(ErrorCode.DELETE_FAIL);
+            throw new AppException(ErrorCode.DELETE_FAIL_BY_STATUS);
         }
 
         purchaseOrderRepository.delete(purchaseOrder);

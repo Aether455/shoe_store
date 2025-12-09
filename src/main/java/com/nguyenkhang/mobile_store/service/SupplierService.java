@@ -1,12 +1,12 @@
 package com.nguyenkhang.mobile_store.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.nguyenkhang.mobile_store.dto.request.SupplierRequest;
 import com.nguyenkhang.mobile_store.dto.response.SupplierResponse;
@@ -79,12 +79,13 @@ public class SupplierService {
         return supplierMapper.toSupplierResponse(supplier);
     }
 
-    @Transactional
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(long id) {
-        var supplier =
-                supplierRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SUPPLIER_NOT_EXISTED));
-        supplierRepository.delete(supplier);
+        try {
+            supplierRepository.deleteById(id);
+        } catch (DataIntegrityViolationException exception) {
+            throw new AppException(ErrorCode.CANNOT_DELETE_SUPPLIER_LINKED_PURCHASE_ORDER);
+        }
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")

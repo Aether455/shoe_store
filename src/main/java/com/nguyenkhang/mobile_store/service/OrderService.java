@@ -187,11 +187,13 @@ public class OrderService {
             Coordinates coordinates =
                     geocodingService.getCoordinates(request.getWard(), request.getDistrict(), request.getProvince());
 
-            if (coordinates != null) {
-                order.setDeliveryLatitude(coordinates.getLatitude());
-                order.setDeliveryLongitude(coordinates.getLongitude());
+            if (coordinates == null) {
+                throw new AppException(ErrorCode.ADDRESS_NOT_FOUND);
             }
+            order.setDeliveryLatitude(coordinates.getLatitude());
+            order.setDeliveryLongitude(coordinates.getLongitude());
         } catch (Exception e) {
+            log.error("Error in create order for admin", e);
             throw e;
         }
         Payment payment = paymentMapper.toPayment(request.getPayment());
@@ -410,13 +412,13 @@ public class OrderService {
                 .changeBy(user)
                 .build();
 
-        order.setStatus(request.getOrderStatus());
         order.setUpdateBy(user);
 
         List<Inventory> inventoriesToUpdate = new ArrayList<>();
         List<ProductVariant> variantToUpdate = new ArrayList<>();
         List<InventoryTransaction> inventoryTransactionsToCreate = new ArrayList<>();
-        if (request.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+        if (request.getOrderStatus().name().equals(OrderStatus.CANCELLED.name())
+                && !order.getStatus().name().equals(OrderStatus.PENDING.name())) {
             Set<Long> variantIds = order.getOrderItems().stream()
                     .map((item) -> item.getProductVariant().getId())
                     .collect(Collectors.toSet());
@@ -462,57 +464,115 @@ public class OrderService {
             }
         }
         if (request.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
+            List<Warehouse> sortedWarehouses = warehouseRepository.findAllSortedByDistance(
+                    order.getDeliveryLatitude(), order.getDeliveryLongitude());
+            log.info("Sort Warehouse is: {}", sortedWarehouses);
+            if (sortedWarehouses.isEmpty()) {
+                throw new AppException(ErrorCode.WAREHOUSE_NOT_FOUND);
+            }
+
+            Warehouse assignedWarehouse = null;
+            Map<Long, Inventory> fulfillmentInventoryMap = null;
             Set<Long> variantIds = order.getOrderItems().stream()
                     .map((item) -> item.getProductVariant().getId())
                     .collect(Collectors.toSet());
+            for (var wh : sortedWarehouses) {
+                Map<Long, Inventory> currentInventoryMap =
+                        inventoryRepository.findByWarehouseIdAndProductVariant_IdIn(wh.getId(), variantIds).stream()
+                                .collect(Collectors.toMap(
+                                        (inventory) ->
+                                                inventory.getProductVariant().getId(),
+                                        Function.identity()));
 
-            Map<Long, ProductVariant> productVariantMap = variantRepository.findAllById(variantIds).stream()
-                    .collect(Collectors.toMap(ProductVariant::getId, Function.identity()));
+                boolean canFulfill = true;
+                for (var item : order.getOrderItems()) {
+                    var inventory =
+                            currentInventoryMap.get(item.getProductVariant().getId());
+                    if (inventory == null || inventory.getQuantity() < item.getQuantity()) {
+                        canFulfill = false;
+                        break; // kho ko phù hợp, next
+                    }
+                }
 
-            Map<Long, Inventory> inventoryMap =
-                    inventoryRepository
-                            .findByWarehouseIdAndProductVariant_IdIn(
-                                    order.getWarehouse().getId(), variantIds)
-                            .stream()
-                            .collect(Collectors.toMap(
-                                    (inventory) -> inventory.getProductVariant().getId(), Function.identity()));
-
-            for (var item : order.getOrderItems()) {
-                Long variantId = item.getProductVariant().getId();
-                int quantityToBuy = item.getQuantity();
-
-                var variant = productVariantMap.get(variantId);
-
-                Inventory inventory = inventoryMap.get(variantId);
-
-                // trừ kho đơn lẻ
-                inventory.setQuantity(inventory.getQuantity() - quantityToBuy);
-                inventoriesToUpdate.add(inventory);
-
-                // trừ tổng kho
-                variant.setQuantity(variant.getQuantity() - quantityToBuy);
-                variantToUpdate.add(variant);
-
-                // ghi ls giao dịch kho
-                InventoryTransaction inventoryTransaction = InventoryTransaction.builder()
-                        .warehouse(order.getWarehouse())
-                        .productVariant(variant)
-                        .createBy(user)
-                        .quantityChange(+item.getQuantity())
-                        .type(InventoryReferenceType.EXPORT_TO_CUSTOMER)
-                        .note("Exports to Order" + order.getOrderCode())
-                        .referenceId(order.getId())
-                        .build();
-                inventoryTransactionsToCreate.add(inventoryTransaction);
+                if (canFulfill) {
+                    assignedWarehouse = wh;
+                    fulfillmentInventoryMap = currentInventoryMap;
+                    break; // thoát vòng lặp sau khi tìm thấy kho phù hợp
+                }
             }
-        }
 
+            // null tức là ko có kho phù hợp
+            if (assignedWarehouse != null) {
+                log.info("Warehouse is: {}", assignedWarehouse);
+                Map<Long, ProductVariant> productVariantMap = variantRepository.findAllById(variantIds).stream()
+                        .collect(Collectors.toMap(ProductVariant::getId, Function.identity()));
+
+                for (var item : order.getOrderItems()) {
+                    Long variantId = item.getProductVariant().getId();
+                    int quantityToBuy = item.getQuantity();
+
+                    var variant = productVariantMap.get(variantId);
+
+                    Inventory inventory = fulfillmentInventoryMap.get(variantId);
+
+                    if (inventory.getQuantity() < quantityToBuy) {
+                        throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
+                    }
+                    // trừ kho đơn lẻ
+                    inventory.setQuantity(inventory.getQuantity() - quantityToBuy);
+                    inventoriesToUpdate.add(inventory);
+
+                    // trừ tổng kho
+                    variant.setQuantity(variant.getQuantity() - quantityToBuy);
+                    variantToUpdate.add(variant);
+
+                    // ghi ls giao dịch kho
+                    InventoryTransaction inventoryTransaction = InventoryTransaction.builder()
+                            .warehouse(assignedWarehouse)
+                            .productVariant(variant)
+                            .createBy(user)
+                            .quantityChange(-item.getQuantity())
+                            .type(InventoryReferenceType.EXPORT_TO_CUSTOMER)
+                            .note("Exports to Order" + order.getOrderCode())
+                            .referenceId(order.getId())
+                            .build();
+                    inventoryTransactionsToCreate.add(inventoryTransaction);
+                }
+
+                order.setStatus(OrderStatus.CONFIRMED);
+                order.setWarehouse(assignedWarehouse);
+
+                try {
+                    order = orderRepository.save(order);
+                    inventoryRepository.saveAll(inventoriesToUpdate);
+                    variantRepository.saveAll(variantToUpdate);
+                    orderStatusHistoryRepository.save(history);
+                    inventoryTransactionRepository.saveAll(inventoryTransactionsToCreate);
+                } catch (DataIntegrityViolationException e) {
+                    log.error("Error in confirm order: ", e);
+                    throw new AppException(ErrorCode.ORDER_CONFIRM_FAIL);
+                } catch (ObjectOptimisticLockingFailureException exception) {
+                    throw new AppException(ErrorCode.PRODUCT_JUST_SOLD_OUT);
+                }
+
+                return orderMapper.toOrderResponse(order);
+            }
+            // ko có kho phù hợp -> ném lỗi
+            throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
+        }
+        order.setStatus(request.getOrderStatus());
         try {
             order = orderRepository.save(order);
-            inventoryRepository.saveAll(inventoriesToUpdate);
-            variantRepository.saveAll(variantToUpdate);
+            if (!inventoriesToUpdate.isEmpty()) {
+                inventoryRepository.saveAll(inventoriesToUpdate);
+            }
+            if (!variantToUpdate.isEmpty()) {
+                variantRepository.saveAll(variantToUpdate);
+            }
             orderStatusHistoryRepository.save(history);
-            inventoryTransactionRepository.saveAll(inventoryTransactionsToCreate);
+            if (!inventoriesToUpdate.isEmpty()) {
+                inventoryTransactionRepository.saveAll(inventoryTransactionsToCreate);
+            }
         } catch (DataIntegrityViolationException e) {
             log.error("Error in update order status: ", e);
             throw new AppException(ErrorCode.ORDER_CREATE_FAIL);
@@ -521,12 +581,12 @@ public class OrderService {
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER','ROLE_ADMIN','ROLE_USER')")
     public OrderResponse update(long id, OrderUpdateRequest request) {
 
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
 
-        if (!order.getStatus().name().equals(OrderStatus.PENDING.name())) {
+        if (!order.getStatus().name().equals(OrderStatus.DELIVERING.name())) {
             throw new AppException(ErrorCode.ORDER_CHANGE_INFO_STATUS_INVALID);
         }
 
