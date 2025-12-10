@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,31 +23,31 @@ public class GlobalExceptionHandle {
     private static final String MIN_ATTRIBUTE = "min";
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingException(Exception exception) {
+    ResponseEntity<ApiResponseDTO> handlingException(Exception exception) {
         log.error("Exception: ", exception);
 
-        ApiResponse apiResponse = new ApiResponse<>();
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO<>();
 
         ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
 
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
-        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+        apiResponseDTO.setCode(errorCode.getCode());
+        apiResponseDTO.setMessage(errorCode.getMessage());
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponseDTO);
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
+    ResponseEntity<ApiResponseDTO> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO();
 
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
+        apiResponseDTO.setCode(errorCode.getCode());
+        apiResponseDTO.setMessage(errorCode.getMessage());
 
-        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponseDTO);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
+    ResponseEntity<ApiResponseDTO> handlingValidation(MethodArgumentNotValidException exception) {
 
         String enumKey = exception.getFieldError().getDefaultMessage();
 
@@ -68,33 +68,33 @@ public class GlobalExceptionHandle {
             log.error(enumKey);
             errorCode = ErrorCode.INVALID_KEY;
         }
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO();
 
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(
+        apiResponseDTO.setCode(errorCode.getCode());
+        apiResponseDTO.setMessage(
                 Objects.nonNull(attributes)
                         ? mapAttribute(errorCode.getMessage(), attributes)
                         : errorCode.getMessage());
 
-        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponseDTO);
     }
 
     @ExceptionHandler(value = AuthorizationDeniedException.class)
-    ResponseEntity<ApiResponse> handlingAuthorizationDeniedException(AuthorizationDeniedException exception) {
+    ResponseEntity<ApiResponseDTO> handlingAuthorizationDeniedException(AuthorizationDeniedException exception) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         return ResponseEntity.status(errorCode.getStatusCode())
-                .body(ApiResponse.builder()
+                .body(ApiResponseDTO.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build());
     }
 
     @ExceptionHandler(value = NoResourceFoundException.class)
-    ResponseEntity<ApiResponse> handingNoResourceFoundException(NoResourceFoundException exception) {
+    ResponseEntity<ApiResponseDTO> handingNoResourceFoundException(NoResourceFoundException exception) {
         ErrorCode errorCode = ErrorCode.NOT_FOUND_API_PATH;
         return ResponseEntity.status(errorCode.getStatusCode())
-                .body(ApiResponse.builder()
+                .body(ApiResponseDTO.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build());

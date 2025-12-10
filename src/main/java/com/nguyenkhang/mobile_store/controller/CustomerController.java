@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.CustomerCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.CustomerUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
@@ -24,68 +24,69 @@ public class CustomerController {
     CustomerService customerService;
 
     @PostMapping
-    public ApiResponse<CustomerResponse> create(@RequestBody @Valid CustomerCreationRequest request) {
-        return ApiResponse.<CustomerResponse>builder()
+    public ApiResponseDTO<CustomerResponse> create(@RequestBody @Valid CustomerCreationRequest request) {
+        return ApiResponseDTO.<CustomerResponse>builder()
                 .message("Success!")
                 .result(customerService.create(request))
                 .build();
     }
 
     @GetMapping
-    public ApiResponse<Page<CustomerResponse>> getAll(
+    public ApiResponseDTO<Page<CustomerResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<CustomerResponse>>builder()
+        return ApiResponseDTO.<Page<CustomerResponse>>builder()
                 .result(customerService.getALl(page, size, sortBy))
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<CustomerResponse> getById(@PathVariable long id) {
-        return ApiResponse.<CustomerResponse>builder()
+    public ApiResponseDTO<CustomerResponse> getById(@PathVariable long id) {
+        return ApiResponseDTO.<CustomerResponse>builder()
                 .message("Success!")
                 .result(customerService.getById(id))
                 .build();
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<CustomerResponse> update(
+    public ApiResponseDTO<CustomerResponse> update(
             @PathVariable long id, @RequestBody @Valid CustomerUpdateRequest request) {
-        return ApiResponse.<CustomerResponse>builder()
+        return ApiResponseDTO.<CustomerResponse>builder()
                 .message("Success!")
                 .result(customerService.update(id, request))
                 .build();
     }
 
     @PutMapping("/current_user") // dành cho customer
-    public ApiResponse<CustomerResponseForUser> updateByCurrentUser(@RequestBody @Valid CustomerUpdateRequest request) {
-        return ApiResponse.<CustomerResponseForUser>builder()
+    public ApiResponseDTO<CustomerResponseForUser> updateByCurrentUser(
+            @RequestBody @Valid CustomerUpdateRequest request) {
+        return ApiResponseDTO.<CustomerResponseForUser>builder()
                 .message("Success!")
                 .result(customerService.updateByCurrentUser(request))
                 .build();
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> delete(@PathVariable long id) {
+    public ApiResponseDTO<String> delete(@PathVariable long id) {
         customerService.delete(id);
-        return ApiResponse.<String>builder()
+        return ApiResponseDTO.<String>builder()
                 .message("Success!")
                 .result("Size has been deleted")
                 .build();
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<CustomerResponse>> searchCustomers(
+    public ApiResponseDTO<Page<CustomerResponse>> searchCustomers(
             @RequestParam(defaultValue = "0") int page, @RequestParam String keyword) {
-        return ApiResponse.<Page<CustomerResponse>>builder()
+        return ApiResponseDTO.<Page<CustomerResponse>>builder()
                 .result(customerService.searchCustomers(keyword, page))
                 .build();
     }
 
     @GetMapping("/me") // lấy thông tin dành cho customer
-    public ApiResponse<CustomerResponseForUser> getCustomerByCurrentUser() {
-        return ApiResponse.<CustomerResponseForUser>builder()
+    public ApiResponseDTO<CustomerResponseForUser> getCustomerByCurrentUser() {
+        return ApiResponseDTO.<CustomerResponseForUser>builder()
                 .result(customerService.getCustomerByCurrentUser())
                 .build();
     }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.RoleRequest;
 import com.nguyenkhang.mobile_store.dto.response.RoleResponse;
 import com.nguyenkhang.mobile_store.service.RoleService;
@@ -21,24 +21,24 @@ public class RoleController {
     RoleService roleService;
 
     @PostMapping
-    public ApiResponse<RoleResponse> createRole(@RequestBody RoleRequest request) {
-        return ApiResponse.<RoleResponse>builder()
+    public ApiResponseDTO<RoleResponse> createRole(@RequestBody RoleRequest request) {
+        return ApiResponseDTO.<RoleResponse>builder()
                 .result(roleService.createRole(request))
                 .message("Success!")
                 .build();
     }
 
     @GetMapping
-    ApiResponse<List<RoleResponse>> getAll() {
-        return ApiResponse.<List<RoleResponse>>builder()
+    ApiResponseDTO<List<RoleResponse>> getAll() {
+        return ApiResponseDTO.<List<RoleResponse>>builder()
                 .result(roleService.getAll())
                 .build();
     }
 
     @DeleteMapping("/{role}")
-    ApiResponse<String> delete(@PathVariable String role) {
+    ApiResponseDTO<String> delete(@PathVariable String role) {
         roleService.delete(role);
-        return ApiResponse.<String>builder()
+        return ApiResponseDTO.<String>builder()
                 .message("Success!")
                 .result("Role has been deleted")
                 .build();

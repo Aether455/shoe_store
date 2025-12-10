@@ -11,7 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;
 
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -23,14 +23,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(errorCode.getStatusCode().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // để trả về 1 cái body với content type là Json
 
-        ApiResponse<?> apiResponse = ApiResponse.builder()
+        ApiResponseDTO<?> apiResponseDTO = ApiResponseDTO.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
 
         ObjectMapper objectMapper = new ObjectMapper(); // convert apiResponse thanh String
 
-        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        response.getWriter().write(objectMapper.writeValueAsString(apiResponseDTO));
 
         response.flushBuffer();
     }

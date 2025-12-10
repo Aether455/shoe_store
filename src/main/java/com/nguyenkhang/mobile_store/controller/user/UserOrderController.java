@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponse;
@@ -25,46 +25,46 @@ public class UserOrderController {
     OrderService orderService;
 
     @PostMapping
-    public ApiResponse<OrderResponse> createOrder(@RequestBody @Valid OrderCreationRequest request) {
-        return ApiResponse.<OrderResponse>builder()
+    public ApiResponseDTO<OrderResponse> createOrder(@RequestBody @Valid OrderCreationRequest request) {
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.createOrder(request))
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<OrderResponseForCustomer> getOrderById(@PathVariable long id) {
-        return ApiResponse.<OrderResponseForCustomer>builder()
+    public ApiResponseDTO<OrderResponseForCustomer> getOrderById(@PathVariable long id) {
+        return ApiResponseDTO.<OrderResponseForCustomer>builder()
                 .result(orderService.getOrderByIdForCustomer(id))
                 .build();
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<OrderResponse> update(@RequestBody @Valid OrderUpdateRequest request, @PathVariable long id) {
-        return ApiResponse.<OrderResponse>builder()
+    public ApiResponseDTO<OrderResponse> update(@RequestBody @Valid OrderUpdateRequest request, @PathVariable long id) {
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.update(id, request))
                 .build();
     }
 
     @PatchMapping("/{id}/confirm")
-    public ApiResponse<OrderResponse> confirmOrder(@PathVariable long id) {
-        return ApiResponse.<OrderResponse>builder()
+    public ApiResponseDTO<OrderResponse> confirmOrder(@PathVariable long id) {
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.confirmOrder(id))
                 .build();
     }
 
     @PatchMapping("/{id}/cancel")
-    public ApiResponse<OrderResponse> cancelOrder(@PathVariable long id) {
-        return ApiResponse.<OrderResponse>builder()
+    public ApiResponseDTO<OrderResponse> cancelOrder(@PathVariable long id) {
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.cancelOrder(id))
                 .build();
     }
 
     @GetMapping("/me")
-    public ApiResponse<Page<SimpleOrderResponseForCustomer>> getMyOrders(
+    public ApiResponseDTO<Page<SimpleOrderResponseForCustomer>> getMyOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<SimpleOrderResponseForCustomer>>builder()
+        return ApiResponseDTO.<Page<SimpleOrderResponseForCustomer>>builder()
                 .result(orderService.getMyOrders(page, size, sortBy))
                 .build();
     }

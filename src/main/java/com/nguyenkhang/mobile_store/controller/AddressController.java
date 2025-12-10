@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.AddressRequest;
 import com.nguyenkhang.mobile_store.dto.response.AddressResponse;
 import com.nguyenkhang.mobile_store.service.AddressService;
@@ -23,36 +23,36 @@ public class AddressController {
     AddressService addressService;
 
     @PostMapping
-    public ApiResponse<AddressResponse> create(@RequestBody @Valid AddressRequest request) {
+    public ApiResponseDTO<AddressResponse> create(@RequestBody @Valid AddressRequest request) {
         var response = addressService.create(request);
-        return ApiResponse.<AddressResponse>builder()
+        return ApiResponseDTO.<AddressResponse>builder()
                 .message("Success!")
                 .result(response)
                 .build();
     }
 
     @GetMapping
-    public ApiResponse<List<AddressResponse>> getAddresses() {
+    public ApiResponseDTO<List<AddressResponse>> getAddresses() {
         var response = addressService.getAddresses();
-        return ApiResponse.<List<AddressResponse>>builder()
+        return ApiResponseDTO.<List<AddressResponse>>builder()
                 .message("Success!")
                 .result(response)
                 .build();
     }
 
     @GetMapping("/{customerId}")
-    public ApiResponse<List<AddressResponse>> getAddressesByCustomerId(@PathVariable long customerId) {
+    public ApiResponseDTO<List<AddressResponse>> getAddressesByCustomerId(@PathVariable long customerId) {
         var response = addressService.getAllByCustomerId(customerId);
-        return ApiResponse.<List<AddressResponse>>builder()
+        return ApiResponseDTO.<List<AddressResponse>>builder()
                 .message("Success!")
                 .result(response)
                 .build();
     }
 
     @DeleteMapping("/{addressId}")
-    public ApiResponse<String> delete(@PathVariable long addressId) {
+    public ApiResponseDTO<String> delete(@PathVariable long addressId) {
         addressService.delete(addressId);
-        return ApiResponse.<String>builder()
+        return ApiResponseDTO.<String>builder()
                 .message("Success!")
                 .result("Address has been deleted")
                 .build();

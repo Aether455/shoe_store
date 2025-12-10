@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.option.OptionRequest;
 import com.nguyenkhang.mobile_store.dto.response.option.OptionResponse;
 import com.nguyenkhang.mobile_store.service.OptionService;
@@ -21,29 +21,31 @@ public class OptionController {
     OptionService optionService;
 
     @GetMapping
-    public ApiResponse<List<OptionResponse>> getAll() {
-        return ApiResponse.<List<OptionResponse>>builder()
+    public ApiResponseDTO<List<OptionResponse>> getAll() {
+        return ApiResponseDTO.<List<OptionResponse>>builder()
                 .result(optionService.getAll())
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<OptionResponse> create(@RequestBody OptionRequest request) {
-        return ApiResponse.<OptionResponse>builder()
+    public ApiResponseDTO<OptionResponse> create(@RequestBody OptionRequest request) {
+        return ApiResponseDTO.<OptionResponse>builder()
                 .result(optionService.create(request))
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<OptionResponse> getById(@PathVariable long id) {
-        return ApiResponse.<OptionResponse>builder()
+    public ApiResponseDTO<OptionResponse> getById(@PathVariable long id) {
+        return ApiResponseDTO.<OptionResponse>builder()
                 .result(optionService.getById(id))
                 .build();
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> delete(@PathVariable long id) {
+    public ApiResponseDTO<String> delete(@PathVariable long id) {
         optionService.delete(id);
-        return ApiResponse.<String>builder().result("Option has been deleted").build();
+        return ApiResponseDTO.<String>builder()
+                .result("Option has been deleted")
+                .build();
     }
 }

@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.option.OptionValueRequest;
 import com.nguyenkhang.mobile_store.dto.response.option.OptionValueResponse;
 import com.nguyenkhang.mobile_store.service.OptionValueService;
@@ -23,23 +23,23 @@ public class OptionValueController {
     OptionValueService optionValueService;
 
     @GetMapping("/{optionId}")
-    public ApiResponse<List<OptionValueResponse>> getByOptionId(@PathVariable long optionId) {
-        return ApiResponse.<List<OptionValueResponse>>builder()
+    public ApiResponseDTO<List<OptionValueResponse>> getByOptionId(@PathVariable long optionId) {
+        return ApiResponseDTO.<List<OptionValueResponse>>builder()
                 .result(optionValueService.getByOptionId(optionId))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<OptionValueResponse> create(@RequestBody @Valid OptionValueRequest request) {
-        return ApiResponse.<OptionValueResponse>builder()
+    public ApiResponseDTO<OptionValueResponse> create(@RequestBody @Valid OptionValueRequest request) {
+        return ApiResponseDTO.<OptionValueResponse>builder()
                 .result(optionValueService.create(request))
                 .build();
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> delete(@PathVariable long id) {
+    public ApiResponseDTO<String> delete(@PathVariable long id) {
         optionValueService.delete(id);
-        return ApiResponse.<String>builder()
+        return ApiResponseDTO.<String>builder()
                 .result("Option value has been deleted")
                 .build();
     }

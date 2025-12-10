@@ -3,7 +3,7 @@ package com.nguyenkhang.mobile_store.controller.user;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.products.ProductFilterCriteria;
 import com.nguyenkhang.mobile_store.dto.response.product.ProductResponseForCustomer;
 import com.nguyenkhang.mobile_store.dto.response.product.SimpleProductResponseForCustomer;
@@ -24,58 +24,58 @@ public class UserProductController {
     ProductVariantService variantService;
 
     @GetMapping
-    public ApiResponse<Page<SimpleProductResponseForCustomer>> getProducts(
+    public ApiResponseDTO<Page<SimpleProductResponseForCustomer>> getProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<SimpleProductResponseForCustomer>>builder()
+        return ApiResponseDTO.<Page<SimpleProductResponseForCustomer>>builder()
                 .result(productService.getProductsForUser(page, size, sortBy))
                 .build();
     }
 
     @GetMapping("/{productId}")
-    public ApiResponse<ProductResponseForCustomer> getProductById(@PathVariable long productId) {
-        return ApiResponse.<ProductResponseForCustomer>builder()
+    public ApiResponseDTO<ProductResponseForCustomer> getProductById(@PathVariable long productId) {
+        return ApiResponseDTO.<ProductResponseForCustomer>builder()
                 .result(productService.getByIdForUser(productId))
                 .build();
     }
 
     @GetMapping("/category/{categoryId}")
-    public ApiResponse<Page<SimpleProductResponseForCustomer>> getProductsByCategory(
+    public ApiResponseDTO<Page<SimpleProductResponseForCustomer>> getProductsByCategory(
             @PathVariable long categoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<SimpleProductResponseForCustomer>>builder()
+        return ApiResponseDTO.<Page<SimpleProductResponseForCustomer>>builder()
                 .result(productService.getProductsByCategory(categoryId, page, size, sortBy))
                 .build();
     }
 
     @GetMapping("/brand/{brandId}")
-    public ApiResponse<Page<SimpleProductResponseForCustomer>> getProductsByBrand(
+    public ApiResponseDTO<Page<SimpleProductResponseForCustomer>> getProductsByBrand(
             @PathVariable long brandId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<SimpleProductResponseForCustomer>>builder()
+        return ApiResponseDTO.<Page<SimpleProductResponseForCustomer>>builder()
                 .result(productService.getProductsByBrand(brandId, page, size, sortBy))
                 .build();
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<SimpleProductSearchResponse>> searchProducts(
+    public ApiResponseDTO<Page<SimpleProductSearchResponse>> searchProducts(
             @RequestParam String keyword, @RequestParam(defaultValue = "20") int page) {
-        return ApiResponse.<Page<SimpleProductSearchResponse>>builder()
+        return ApiResponseDTO.<Page<SimpleProductSearchResponse>>builder()
                 .result(productService.searchProducts(keyword, page))
                 .build();
     }
 
     @GetMapping("/filter")
-    public ApiResponse<Page<SimpleProductResponseForCustomer>> filterProduct(
+    public ApiResponseDTO<Page<SimpleProductResponseForCustomer>> filterProduct(
             ProductFilterCriteria criteria,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.<Page<SimpleProductResponseForCustomer>>builder()
+        return ApiResponseDTO.<Page<SimpleProductResponseForCustomer>>builder()
                 .result(productService.filterProduct(criteria, page, size))
                 .build();
     }

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.CartItemRequest;
 import com.nguyenkhang.mobile_store.dto.request.CartItemUpdateQuantityRequest;
 import com.nguyenkhang.mobile_store.dto.response.cart.CartItemResponse;
@@ -23,37 +23,37 @@ public class CartController {
     CartService cartService;
 
     @PostMapping
-    ApiResponse<CartItemResponse> addToCart(@RequestBody @Valid CartItemRequest request) {
-        return ApiResponse.<CartItemResponse>builder()
+    ApiResponseDTO<CartItemResponse> addToCart(@RequestBody @Valid CartItemRequest request) {
+        return ApiResponseDTO.<CartItemResponse>builder()
                 .result(cartService.addToCart(request))
                 .build();
     }
 
     @GetMapping("/me")
-    ApiResponse<CartResponse> getMyCart() {
-        return ApiResponse.<CartResponse>builder()
+    ApiResponseDTO<CartResponse> getMyCart() {
+        return ApiResponseDTO.<CartResponse>builder()
                 .result(cartService.getMyCart())
                 .build();
     }
 
     @PutMapping("/quantity")
-    ApiResponse<CartItemResponse> updateQuantity(@RequestBody @Valid CartItemUpdateQuantityRequest request) {
-        return ApiResponse.<CartItemResponse>builder()
+    ApiResponseDTO<CartItemResponse> updateQuantity(@RequestBody @Valid CartItemUpdateQuantityRequest request) {
+        return ApiResponseDTO.<CartItemResponse>builder()
                 .result(cartService.updateQuantity(request))
                 .build();
     }
 
     @DeleteMapping("/cartItem/{cartItemId}")
-    ApiResponse<String> deleteCartItem(@PathVariable long cartItemId) {
+    ApiResponseDTO<String> deleteCartItem(@PathVariable long cartItemId) {
         cartService.deleteCartItem(cartItemId);
-        return ApiResponse.<String>builder()
+        return ApiResponseDTO.<String>builder()
                 .result("Cart item has been deleted")
                 .build();
     }
 
     @DeleteMapping("/clear")
-    ApiResponse<String> clearMyCart() {
+    ApiResponseDTO<String> clearMyCart() {
         cartService.clearMyCart();
-        return ApiResponse.<String>builder().result("Cart has been deleted").build();
+        return ApiResponseDTO.<String>builder().result("Cart has been deleted").build();
     }
 }

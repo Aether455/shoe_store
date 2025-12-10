@@ -3,7 +3,7 @@ package com.nguyenkhang.mobile_store.controller.user;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponseForCustomer;
 import com.nguyenkhang.mobile_store.service.VoucherService;
 
@@ -19,16 +19,16 @@ public class UserVoucherController {
     VoucherService voucherService;
 
     @GetMapping("/{voucherCode}")
-    public ApiResponse<VoucherResponseForCustomer> getByVoucherCode(@PathVariable String voucherCode) {
-        return ApiResponse.<VoucherResponseForCustomer>builder()
+    public ApiResponseDTO<VoucherResponseForCustomer> getByVoucherCode(@PathVariable String voucherCode) {
+        return ApiResponseDTO.<VoucherResponseForCustomer>builder()
                 .result(voucherService.findByVoucherCode(voucherCode))
                 .build();
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<VoucherResponseForCustomer>> searchVouchers(
+    public ApiResponseDTO<Page<VoucherResponseForCustomer>> searchVouchers(
             @RequestParam(defaultValue = "0") int page, @RequestParam String keyword) {
-        return ApiResponse.<Page<VoucherResponseForCustomer>>builder()
+        return ApiResponseDTO.<Page<VoucherResponseForCustomer>>builder()
                 .result(voucherService.searchVouchersForUser(keyword, page))
                 .build();
     }

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.order.PaymentUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.payment.PaymentResponse;
 import com.nguyenkhang.mobile_store.service.PaymentService;
@@ -22,9 +22,9 @@ public class PaymentController {
     PaymentService paymentService;
 
     @PutMapping("/{id}")
-    public ApiResponse<PaymentResponse> updateStatus(
+    public ApiResponseDTO<PaymentResponse> updateStatus(
             @PathVariable long id, @RequestBody @Valid PaymentUpdateRequest request) {
-        return ApiResponse.<PaymentResponse>builder()
+        return ApiResponseDTO.<PaymentResponse>builder()
                 .result(paymentService.updatePaymentStatus(id, request))
                 .build();
     }

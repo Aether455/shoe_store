@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.VoucherRequest;
 import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponse;
 import com.nguyenkhang.mobile_store.service.VoucherService;
@@ -22,47 +22,49 @@ public class VoucherController {
     VoucherService voucherService;
 
     @GetMapping
-    public ApiResponse<Page<VoucherResponse>> getVouchers(
+    public ApiResponseDTO<Page<VoucherResponse>> getVouchers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<VoucherResponse>>builder()
+        return ApiResponseDTO.<Page<VoucherResponse>>builder()
                 .result(voucherService.getVouchers(page, size, sortBy))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<VoucherResponse> create(@RequestBody @Valid VoucherRequest request) {
-        return ApiResponse.<VoucherResponse>builder()
+    public ApiResponseDTO<VoucherResponse> create(@RequestBody @Valid VoucherRequest request) {
+        return ApiResponseDTO.<VoucherResponse>builder()
                 .result(voucherService.create(request))
                 .build();
     }
 
     @GetMapping("/{voucherId}")
-    public ApiResponse<VoucherResponse> getVoucherById(@PathVariable long voucherId) {
-        return ApiResponse.<VoucherResponse>builder()
+    public ApiResponseDTO<VoucherResponse> getVoucherById(@PathVariable long voucherId) {
+        return ApiResponseDTO.<VoucherResponse>builder()
                 .result(voucherService.getVoucherById(voucherId))
                 .build();
     }
 
     @PutMapping("/{voucherId}")
-    public ApiResponse<VoucherResponse> update(
+    public ApiResponseDTO<VoucherResponse> update(
             @PathVariable long voucherId, @RequestBody @Valid VoucherRequest request) {
-        return ApiResponse.<VoucherResponse>builder()
+        return ApiResponseDTO.<VoucherResponse>builder()
                 .result(voucherService.updateVoucher(voucherId, request))
                 .build();
     }
 
     @DeleteMapping("/{voucherId}")
-    ApiResponse<String> delete(@PathVariable long voucherId) {
+    ApiResponseDTO<String> delete(@PathVariable long voucherId) {
         voucherService.delete(voucherId);
-        return ApiResponse.<String>builder().result("Voucher has been deleted").build();
+        return ApiResponseDTO.<String>builder()
+                .result("Voucher has been deleted")
+                .build();
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<VoucherResponse>> searchVouchers(
+    public ApiResponseDTO<Page<VoucherResponse>> searchVouchers(
             @RequestParam(defaultValue = "0") int page, @RequestParam String keyword) {
-        return ApiResponse.<Page<VoucherResponse>>builder()
+        return ApiResponseDTO.<Page<VoucherResponse>>builder()
                 .result(voucherService.searchVouchers(keyword, page))
                 .build();
     }

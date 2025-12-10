@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponseForCustomer;
 import com.nguyenkhang.mobile_store.service.CategoryService;
 
@@ -21,8 +21,8 @@ public class UserCategoryController {
     CategoryService categoryService;
 
     @GetMapping
-    public ApiResponse<List<CategoryResponseForCustomer>> getCategories() {
-        return ApiResponse.<List<CategoryResponseForCustomer>>builder()
+    public ApiResponseDTO<List<CategoryResponseForCustomer>> getCategories() {
+        return ApiResponseDTO.<List<CategoryResponseForCustomer>>builder()
                 .result(categoryService.getCategoriesForUser())
                 .build();
     }

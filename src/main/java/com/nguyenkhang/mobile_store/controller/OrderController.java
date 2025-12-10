@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderCreationRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateStatusRequest;
@@ -25,50 +25,50 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping
-    public ApiResponse<OrderResponse> createOrderForAdmin(@RequestBody @Valid OrderCreationRequest request) {
-        return ApiResponse.<OrderResponse>builder()
+    public ApiResponseDTO<OrderResponse> createOrderForAdmin(@RequestBody @Valid OrderCreationRequest request) {
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.createOrderForAdmin(request))
                 .build();
     }
 
     @GetMapping
-    public ApiResponse<Page<SimpleOrderResponse>> getOrders(
+    public ApiResponseDTO<Page<SimpleOrderResponse>> getOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<SimpleOrderResponse>>builder()
+        return ApiResponseDTO.<Page<SimpleOrderResponse>>builder()
                 .result(orderService.getOrders(page, size, sortBy))
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<OrderResponse> getOrderById(@PathVariable long id) {
-        return ApiResponse.<OrderResponse>builder()
+    public ApiResponseDTO<OrderResponse> getOrderById(@PathVariable long id) {
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.getOrderById(id))
                 .build();
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<OrderResponse> update(@RequestBody @Valid OrderUpdateRequest request, @PathVariable long id) {
-        return ApiResponse.<OrderResponse>builder()
+    public ApiResponseDTO<OrderResponse> update(@RequestBody @Valid OrderUpdateRequest request, @PathVariable long id) {
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.update(id, request))
                 .build();
     }
 
     @PutMapping("/{id}/status")
-    public ApiResponse<OrderResponse> updateStatus(
+    public ApiResponseDTO<OrderResponse> updateStatus(
             @RequestBody @Valid OrderUpdateStatusRequest request, @PathVariable long id) {
-        return ApiResponse.<OrderResponse>builder()
+        return ApiResponseDTO.<OrderResponse>builder()
                 .result(orderService.updateStatus(id, request))
                 .build();
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<SimpleOrderResponse>> searchOrders(
+    public ApiResponseDTO<Page<SimpleOrderResponse>> searchOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam String keyword,
             @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.<Page<SimpleOrderResponse>>builder()
+        return ApiResponseDTO.<Page<SimpleOrderResponse>>builder()
                 .result(orderService.searchOrders(keyword, page, size))
                 .build();
     }

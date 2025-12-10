@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.nguyenkhang.mobile_store.dto.ApiResponse;
+import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.user.*;
 import com.nguyenkhang.mobile_store.dto.response.user.*;
 import com.nguyenkhang.mobile_store.service.UserService;
@@ -22,80 +22,80 @@ public class UserController {
     UserService userService;
 
     @PostMapping
-    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+    public ApiResponseDTO<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
 
-        return ApiResponse.<UserResponse>builder()
+        return ApiResponseDTO.<UserResponse>builder()
                 .result(userService.createUser(request))
                 .build();
     }
 
     @PostMapping("/customers") // dành cho customer
-    public ApiResponse<UserResponseForCustomer> createUserForCustomer(
+    public ApiResponseDTO<UserResponseForCustomer> createUserForCustomer(
             @RequestBody @Valid UserCreationRequestForCustomer request) {
 
-        return ApiResponse.<UserResponseForCustomer>builder()
+        return ApiResponseDTO.<UserResponseForCustomer>builder()
                 .result(userService.createUserForCustomer(request))
                 .build();
     }
 
     @PostMapping("/staffs") // dành cho trang quản lý nhân viên
-    public ApiResponse<UserResponse> createUserForStaff(@RequestBody @Valid UserCreationRequestForStaff request) {
+    public ApiResponseDTO<UserResponse> createUserForStaff(@RequestBody @Valid UserCreationRequestForStaff request) {
 
-        return ApiResponse.<UserResponse>builder()
+        return ApiResponseDTO.<UserResponse>builder()
                 .result(userService.createUserForStaff(request))
                 .build();
     }
 
     @GetMapping
-    public ApiResponse<Page<UserResponse>> getUsers(
+    public ApiResponseDTO<Page<UserResponse>> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return ApiResponse.<Page<UserResponse>>builder()
+        return ApiResponseDTO.<Page<UserResponse>>builder()
                 .result(userService.getUsers(page, size, sortBy))
                 .build();
     }
 
     @GetMapping("/{userId}") // detail
-    public ApiResponse<UserResponse> getUserById(@PathVariable("userId") long userId) {
-        return ApiResponse.<UserResponse>builder()
+    public ApiResponseDTO<UserResponse> getUserById(@PathVariable("userId") long userId) {
+        return ApiResponseDTO.<UserResponse>builder()
                 .result(userService.getUserById(userId))
                 .build();
     }
 
     @PutMapping("/{userId}")
-    public ApiResponse<UserResponse> updateUser(
+    public ApiResponseDTO<UserResponse> updateUser(
             @PathVariable("userId") long userId, @RequestBody @Valid UserUpdateRequest request) {
 
-        return ApiResponse.<UserResponse>builder()
+        return ApiResponseDTO.<UserResponse>builder()
                 .result(userService.updateUser(userId, request))
                 .build();
     }
 
     @DeleteMapping("/{userId}")
-    ApiResponse<String> deleteUser(@PathVariable long userId) {
+    ApiResponseDTO<String> deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
-        return ApiResponse.<String>builder().result("User has been deleted").build();
+        return ApiResponseDTO.<String>builder().result("User has been deleted").build();
     }
 
     @PutMapping("/change-password")
-    ApiResponse<SimpleUserResponse> changePassword(@RequestBody UserChangePasswordRequest request) {
-        return ApiResponse.<SimpleUserResponse>builder()
+    ApiResponseDTO<SimpleUserResponse> changePassword(@RequestBody UserChangePasswordRequest request) {
+        return ApiResponseDTO.<SimpleUserResponse>builder()
                 .result(userService.changePassword(request))
                 .build();
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<UserResponse>> searchUsers(
+    public ApiResponseDTO<Page<UserResponse>> searchUsers(
             @RequestParam(defaultValue = "0") int page, @RequestParam String keyword) {
-        return ApiResponse.<Page<UserResponse>>builder()
+        return ApiResponseDTO.<Page<UserResponse>>builder()
                 .result(userService.searchUser(keyword, page))
                 .build();
     }
 
     @GetMapping("/me") // dành cho customer
-    public ApiResponse<SimpleUserInfoResponse> getMyInfo() {
-        return ApiResponse.<SimpleUserInfoResponse>builder()
+    public ApiResponseDTO<SimpleUserInfoResponse> getMyInfo() {
+        return ApiResponseDTO.<SimpleUserInfoResponse>builder()
                 .result(userService.getMyInfo())
                 .build();
     }
