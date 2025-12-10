@@ -230,7 +230,7 @@ public class OrderService {
                 warehouseRepository.findAllSortedByDistance(order.getDeliveryLatitude(), order.getDeliveryLongitude());
         log.info("Sort Warehouse is: {}", sortedWarehouses);
         if (sortedWarehouses.isEmpty()) {
-            throw new AppException(ErrorCode.WAREHOUSE_NOT_FOUND);
+            throw new AppException(ErrorCode.WAREHOUSE_NOT_EXISTED);
         }
 
         Warehouse assignedWarehouse = null;
@@ -468,7 +468,7 @@ public class OrderService {
                     order.getDeliveryLatitude(), order.getDeliveryLongitude());
             log.info("Sort Warehouse is: {}", sortedWarehouses);
             if (sortedWarehouses.isEmpty()) {
-                throw new AppException(ErrorCode.WAREHOUSE_NOT_FOUND);
+                throw new AppException(ErrorCode.WAREHOUSE_NOT_EXISTED);
             }
 
             Warehouse assignedWarehouse = null;
