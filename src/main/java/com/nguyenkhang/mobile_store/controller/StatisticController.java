@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.DailyReportCriteria;
-import com.nguyenkhang.mobile_store.dto.response.statistic.DailyReportResponse;
-import com.nguyenkhang.mobile_store.dto.response.statistic.RevenueReportResponse;
 import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.statistic.BrandRevenueResponse;
 import com.nguyenkhang.mobile_store.dto.response.statistic.CategoryRevenueResponse;
+import com.nguyenkhang.mobile_store.dto.response.statistic.DailyReportResponse;
 import com.nguyenkhang.mobile_store.dto.response.statistic.ProductRevenueResponse;
+import com.nguyenkhang.mobile_store.dto.response.statistic.RevenueReportResponse;
 import com.nguyenkhang.mobile_store.dto.response.statistic.SellingProductResponse;
 import com.nguyenkhang.mobile_store.service.DailyReportService;
 import com.nguyenkhang.mobile_store.service.StatisticService;

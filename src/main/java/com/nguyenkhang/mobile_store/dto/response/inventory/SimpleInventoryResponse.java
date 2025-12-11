@@ -2,8 +2,8 @@ package com.nguyenkhang.mobile_store.dto.response.inventory;
 
 import java.time.LocalDateTime;
 
-import com.nguyenkhang.mobile_store.dto.response.warehouse.WarehouseResponse;
 import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
+import com.nguyenkhang.mobile_store.dto.response.warehouse.WarehouseResponse;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

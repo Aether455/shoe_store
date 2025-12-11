@@ -12,8 +12,6 @@ import com.nguyenkhang.mobile_store.entity.Warehouse;
 
 @Repository
 public interface WarehouseRepository extends JpaRepository<Warehouse, Long>, JpaSpecificationExecutor<Warehouse> {
-    List<Warehouse> findByProvinceOrderByPriorityAsc(String province);
-
     @Query(
             value = "SELECT w.*, " + "ST_Distance_Sphere( "
                     + "ST_SRID(POINT(w.longitude, w.latitude), 4326), "
