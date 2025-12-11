@@ -39,6 +39,13 @@ public class PurchaseOrderController {
                 .build();
     }
 
+    @PatchMapping("/{id}/complete")
+    public ApiResponseDTO<PurchaseOrderResponse> complete(@PathVariable long id) {
+        return ApiResponseDTO.<PurchaseOrderResponse>builder()
+                .result(purchaseOrderService.complete(id))
+                .build();
+    }
+
     @PatchMapping("/{id}/cancel")
     public ApiResponseDTO<PurchaseOrderResponse> cancel(@PathVariable long id) {
         return ApiResponseDTO.<PurchaseOrderResponse>builder()

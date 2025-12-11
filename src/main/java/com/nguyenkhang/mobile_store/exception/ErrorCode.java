@@ -186,14 +186,17 @@ public enum ErrorCode {
     PURCHASE_ORDER_NOT_EXISTED(6200, "Phiếu nhập hàng không tồn tại!", HttpStatus.NOT_FOUND),
     STATUS_IS_NOT_CHANGE_TO_APPROVED(
             6201, "Không thể thay đổi trạng thái khi phiếu nhập đã DUYỆT hoặc HỦY!", HttpStatus.BAD_REQUEST),
-    STATUS_IS_NOT_CHANGE_TO_CANCEL(
-            6202, "Không thể thay đổi trạng thái khi phiếu nhập đã HỦY!", HttpStatus.BAD_REQUEST),
+    STATUS_IS_NOT_CANCEL_TO_COMPLETED(6202, "Không thể hủy khi phiếu nhập đã HOÀN THÀNH!", HttpStatus.BAD_REQUEST),
     DELETE_FAIL_BY_STATUS(
             6203, "Không thể xóa phiếu nhập khi trạng thái là ĐÃ DUYỆT hoặc ĐÃ HỦY!", HttpStatus.BAD_REQUEST),
     PRICE_REQUIRED(6204, "Giá nhập là bắt buộc!", HttpStatus.BAD_REQUEST),
     PRICE_INVALID(6205, "Giá nhập phải là số và lớn hơn 0!", HttpStatus.BAD_REQUEST),
     TOTAL_PRICE_REQUIRED(6206, "Tổng tiền là bắt buộc!", HttpStatus.BAD_REQUEST),
     TOTAL_PRICE_INVALID(6207, "Tổng tiền phải là số và lớn hơn 0!", HttpStatus.BAD_REQUEST),
+    STATUS_IS_NOT_CHANGE_TO_COMPLETED(
+            6208, "Không thể thay đổi trạng thái khi phiếu nhập chưa duyệt hoặc đã bị hủy!", HttpStatus.BAD_REQUEST),
+    DUPLICATE_STATUS(6029, "Trạng thái phiếu nhập trùng lặp!", HttpStatus.BAD_REQUEST),
+    PURCHASE_ORDER_CAN_NOT_DELETE(6010, "Không thể xóa  phiếu nhập này!", HttpStatus.CONFLICT),
 
     // Inventory Transaction
     INVENTORY_NOT_EXISTED(6300, "Thông tin tồn kho không tồn tại!", HttpStatus.NOT_FOUND),

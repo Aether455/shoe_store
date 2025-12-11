@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityManager;
+
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +56,9 @@ public class PurchaseOrderService {
     ProductVariantRepository variantRepository;
     InventoryRepository inventoryRepository;
     InventoryTransactionRepository inventoryTransactionRepository;
+
+    UserService userService;
+    EntityManager entityManager;
 
     @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
@@ -147,8 +153,33 @@ public class PurchaseOrderService {
         var purchaseOrder = purchaseOrderRepository
                 .findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PURCHASE_ORDER_NOT_EXISTED));
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        User user = userService.getCurrentUser();
+        if (purchaseOrder.getStatus().equals(PurchaseOrderStatus.APPROVED)) {
+            throw new AppException(ErrorCode.DUPLICATE_STATUS);
+        }
+
+        if (!purchaseOrder.getStatus().equals(PurchaseOrderStatus.DRAFT)) {
+            throw new AppException(ErrorCode.STATUS_IS_NOT_CHANGE_TO_APPROVED);
+        }
+
+        purchaseOrder.setStatus(PurchaseOrderStatus.APPROVED);
+        purchaseOrder.setUpdateBy(user);
+
+        purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+        return purchaseOrderMapper.toPurchaseOrderResponse(purchaseOrder);
+    }
+
+    @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
+    public PurchaseOrderResponse complete(long id) {
+        var purchaseOrder = purchaseOrderRepository
+                .findByIdForUpdate(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PURCHASE_ORDER_NOT_EXISTED));
+        if (purchaseOrder.getStatus().equals(PurchaseOrderStatus.COMPLETED)) {
+            throw new AppException(ErrorCode.DUPLICATE_STATUS);
+        }
+        User user = userService.getCurrentUser();
 
         Map<Long, ProductVariant> variantMap = purchaseOrder.getPurchaseOrderItems().stream()
                 .map(PurchaseOrderItem::getProductVariant)
@@ -165,8 +196,8 @@ public class PurchaseOrderService {
         List<Inventory> inventoriesToUpdateOrCreate = new ArrayList<>();
         List<ProductVariant> variantToUpdate = new ArrayList<>();
 
-        if (!purchaseOrder.getStatus().equals(PurchaseOrderStatus.DRAFT)) {
-            throw new AppException(ErrorCode.STATUS_IS_NOT_CHANGE_TO_APPROVED);
+        if (!purchaseOrder.getStatus().equals(PurchaseOrderStatus.APPROVED)) {
+            throw new AppException(ErrorCode.STATUS_IS_NOT_CHANGE_TO_COMPLETED);
         }
 
         for (var item : purchaseOrder.getPurchaseOrderItems()) {
@@ -233,70 +264,15 @@ public class PurchaseOrderService {
         var purchaseOrder = purchaseOrderRepository
                 .findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PURCHASE_ORDER_NOT_EXISTED));
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
         if (purchaseOrder.getStatus().equals(PurchaseOrderStatus.CANCELLED)) {
-            throw new AppException(ErrorCode.STATUS_IS_NOT_CHANGE_TO_CANCEL);
+            throw new AppException(ErrorCode.DUPLICATE_STATUS);
+        }
+        User user = userService.getCurrentUser();
+
+        if (purchaseOrder.getStatus().equals(PurchaseOrderStatus.COMPLETED)) {
+            throw new AppException(ErrorCode.STATUS_IS_NOT_CANCEL_TO_COMPLETED);
         }
 
-        if (purchaseOrder.getStatus().equals(PurchaseOrderStatus.APPROVED)) {
-            Map<Long, ProductVariant> variantMap = purchaseOrder.getPurchaseOrderItems().stream()
-                    .map(PurchaseOrderItem::getProductVariant)
-                    .collect(Collectors.toMap(ProductVariant::getId, Function.identity()));
-
-            Map<Long, Inventory> inventoriesByVariants =
-                    inventoryRepository
-                            .findAllByWarehouseIdForUpdate(
-                                    purchaseOrder.getWarehouse().getId())
-                            .stream()
-                            .collect(Collectors.toMap(
-                                    (e) -> e.getProductVariant().getId(), Function.identity()));
-
-            List<InventoryTransaction> inventoryTransactionsToCreate = new ArrayList<>();
-            List<Inventory> inventoriesToUpdateOrCreate = new ArrayList<>();
-            List<ProductVariant> variantToUpdate = new ArrayList<>();
-
-            for (var item : purchaseOrder.getPurchaseOrderItems()) {
-                var variant = variantMap.get(item.getProductVariant().getId());
-
-                if (variant == null) {
-                    throw new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED);
-                }
-
-                Inventory inventory = inventoriesByVariants.get(variant.getId());
-                if (inventory != null) {
-                    inventory.setQuantity(inventory.getQuantity() - item.getQuantity());
-                    inventory.setUpdateBy(user);
-                    inventoriesToUpdateOrCreate.add(inventory);
-                }
-                InventoryTransaction inventoryTransaction = InventoryTransaction.builder()
-                        .warehouse(purchaseOrder.getWarehouse())
-                        .productVariant(variant)
-                        .product(variant.getProduct())
-                        .createBy(user)
-                        .quantityChange(-item.getQuantity())
-                        .type(InventoryReferenceType.CANCEL_IMPORT_ORDER)
-                        .note("Cancel import order")
-                        .referenceId(purchaseOrder.getId())
-                        .build();
-
-                variant.setQuantity(variant.getQuantity() - item.getQuantity());
-
-                inventoryTransactionsToCreate.add(inventoryTransaction);
-                variantToUpdate.add(variant);
-            }
-
-            try {
-                inventoryRepository.saveAll(inventoriesToUpdateOrCreate);
-                variantRepository.saveAll(variantToUpdate);
-
-            } catch (ObjectOptimisticLockingFailureException exception) {
-                throw new AppException(ErrorCode.CONCURRENT_MODIFICATION);
-            }
-
-            inventoryTransactionRepository.saveAll(inventoryTransactionsToCreate);
-        }
         purchaseOrder.setStatus(PurchaseOrderStatus.CANCELLED);
         purchaseOrder.setUpdateBy(user);
 
@@ -310,7 +286,7 @@ public class PurchaseOrderService {
         return purchaseOrderMapper.toPurchaseOrderResponse(purchaseOrder);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ConstraintViolationException.class)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String delete(long id) {
         var purchaseOrder = purchaseOrderRepository
@@ -320,7 +296,12 @@ public class PurchaseOrderService {
             throw new AppException(ErrorCode.DELETE_FAIL_BY_STATUS);
         }
 
-        purchaseOrderRepository.delete(purchaseOrder);
+        try {
+            purchaseOrderRepository.delete(purchaseOrder);
+            entityManager.flush();
+        } catch (ConstraintViolationException exception) {
+            throw new AppException(ErrorCode.PURCHASE_ORDER_CAN_NOT_DELETE);
+        }
 
         return "Purchase order has been deleted";
     }

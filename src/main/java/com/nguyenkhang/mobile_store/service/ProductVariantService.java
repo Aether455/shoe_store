@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 import jakarta.persistence.EntityManager;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -30,12 +28,13 @@ import com.nguyenkhang.mobile_store.utils.VariantUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class ProductVariantService {
-    private static final Logger log = LoggerFactory.getLogger(ProductVariantService.class);
     ProductVariantMapper variantMapper;
     ProductVariantRepository variantRepository;
     ProductRepository productRepository;

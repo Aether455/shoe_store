@@ -2,6 +2,7 @@ package com.nguyenkhang.mobile_store.dto.request.products;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -27,6 +28,7 @@ public class ProductAndVariantsCreationRequest {
     @NotNull(message = "MAIN_IMAGE_FILE_REQUIRED")
     MultipartFile mainImageFile;
 
+    @Valid
     List<VariantCreationRequest> variants;
 
     @NotNull(message = "CATEGORY_NOT_NULL")

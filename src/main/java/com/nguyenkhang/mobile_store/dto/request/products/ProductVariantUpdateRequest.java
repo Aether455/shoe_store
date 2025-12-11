@@ -28,8 +28,4 @@ public class ProductVariantUpdateRequest {
     @Positive(message = "PRODUCT_PRICE_INVALID")
     @NotNull(message = "PRODUCT_PRICE_REQUIRED")
     double price;
-
-    @PositiveOrZero(message = "QUANTITY_INVALID")
-    @NotNull(message = "QUANTITY_REQUIRED")
-    int quantity;
 }

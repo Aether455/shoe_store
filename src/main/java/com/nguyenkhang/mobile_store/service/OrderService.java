@@ -143,6 +143,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrderForAdmin(OrderCreationRequest request) {
+        User user = userService.getCurrentUser();
 
         Voucher voucher =
                 voucherRepository.findByVoucherCode(request.getVoucherCode()).orElse(null);
@@ -201,6 +202,7 @@ public class OrderService {
         payment.setAmount(order.getFinalAmount());
         payment.setOrder(order);
         order.setPayment(payment);
+        order.setCreateBy(user);
 
         try {
             order = orderRepository.save(order);
@@ -309,6 +311,7 @@ public class OrderService {
                     .newStatus(OrderStatus.CONFIRMED.name())
                     .changeBy(user)
                     .build();
+            order.setUpdateBy(user);
 
             try {
                 order = orderRepository.save(order);
@@ -338,6 +341,7 @@ public class OrderService {
             throw new AppException(ErrorCode.ORDER_CANCEL_STATUS_INVALID);
         }
 
+        order.setUpdateBy(user);
         order.setStatus(OrderStatus.CANCELLED);
         OrderStatusHistory history = OrderStatusHistory.builder()
                 .order(order)
