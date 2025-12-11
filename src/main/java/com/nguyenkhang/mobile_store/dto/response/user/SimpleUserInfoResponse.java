@@ -2,7 +2,7 @@ package com.nguyenkhang.mobile_store.dto.response.user;
 
 import java.util.Set;
 
-import com.nguyenkhang.mobile_store.dto.response.RoleResponse;
+import com.nguyenkhang.mobile_store.dto.response.auth.RoleResponse;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

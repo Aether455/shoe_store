@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import com.nguyenkhang.mobile_store.dto.request.CustomerCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.CustomerUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.customer.CustomerCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.customer.CustomerUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponseForUser;
 import com.nguyenkhang.mobile_store.entity.Customer;

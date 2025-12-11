@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.VoucherRequest;
+import com.nguyenkhang.mobile_store.dto.request.voucher.VoucherRequest;
 import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponse;
 import com.nguyenkhang.mobile_store.service.VoucherService;
 

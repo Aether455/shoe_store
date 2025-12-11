@@ -6,7 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import com.nguyenkhang.mobile_store.dto.request.BrandRequest;
+import com.nguyenkhang.mobile_store.dto.request.brand.BrandRequest;
 import com.nguyenkhang.mobile_store.dto.response.brand.BrandResponse;
 import com.nguyenkhang.mobile_store.dto.response.brand.BrandResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.Brand;

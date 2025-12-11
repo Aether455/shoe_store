@@ -7,8 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nguyenkhang.mobile_store.dto.request.CategoryCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.CategoryUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.category.CategoryCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.category.CategoryUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponse;
 import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.Category;

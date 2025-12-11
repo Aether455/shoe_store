@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nguyenkhang.mobile_store.dto.response.RevenueReportResponse;
+import com.nguyenkhang.mobile_store.dto.response.statistic.RevenueReportResponse;
 import com.nguyenkhang.mobile_store.entity.Order;
 import com.nguyenkhang.mobile_store.enums.OrderStatus;
 
@@ -23,7 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     @Query("select o from Order o where o.status = :status and DATE(o.createAt) = :date")
     List<Order> findAllByStatusAndCreateAt(@Param("status") OrderStatus status, @Param("date") LocalDate date);
 
-    @Query("select new com.nguyenkhang.mobile_store.dto.response.RevenueReportResponse("
+    @Query("select new com.nguyenkhang.mobile_store.dto.response.statistic.RevenueReportResponse("
             + " CONCAT(YEAR(o.createAt), '-', LPAD(STR(MONTH(o.createAt)), 2, '0')) ,"
             + " SUM(o.finalAmount)"
             + ") from Order o where o.status = :status "

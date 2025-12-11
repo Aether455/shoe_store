@@ -3,8 +3,8 @@ package com.nguyenkhang.mobile_store.dto.response.purchase_order;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.nguyenkhang.mobile_store.dto.response.SimpleSupplierResponse;
-import com.nguyenkhang.mobile_store.dto.response.SimpleWarehouseResponse;
+import com.nguyenkhang.mobile_store.dto.response.supplier.SimpleSupplierResponse;
+import com.nguyenkhang.mobile_store.dto.response.warehouse.SimpleWarehouseResponse;
 import com.nguyenkhang.mobile_store.dto.response.user.SimpleUserResponse;
 import com.nguyenkhang.mobile_store.enums.PurchaseOrderStatus;
 

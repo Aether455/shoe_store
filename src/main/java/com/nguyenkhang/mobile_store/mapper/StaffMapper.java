@@ -3,9 +3,9 @@ package com.nguyenkhang.mobile_store.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-import com.nguyenkhang.mobile_store.dto.request.StaffRequest;
-import com.nguyenkhang.mobile_store.dto.request.StaffUpdateRequest;
-import com.nguyenkhang.mobile_store.dto.response.StaffResponse;
+import com.nguyenkhang.mobile_store.dto.request.staff.StaffRequest;
+import com.nguyenkhang.mobile_store.dto.request.staff.StaffUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.response.staff.StaffResponse;
 import com.nguyenkhang.mobile_store.entity.Staff;
 
 @Mapper(componentModel = "spring")

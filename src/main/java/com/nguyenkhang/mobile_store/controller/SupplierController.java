@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.SupplierRequest;
-import com.nguyenkhang.mobile_store.dto.response.SupplierResponse;
+import com.nguyenkhang.mobile_store.dto.request.supplier.SupplierRequest;
+import com.nguyenkhang.mobile_store.dto.response.supplier.SupplierResponse;
 import com.nguyenkhang.mobile_store.service.SupplierService;
 
 import lombok.AccessLevel;

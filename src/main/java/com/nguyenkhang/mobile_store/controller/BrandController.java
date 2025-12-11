@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.annotations.ApiCommonResponses;
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.BrandRequest;
+import com.nguyenkhang.mobile_store.dto.request.brand.BrandRequest;
 import com.nguyenkhang.mobile_store.dto.response.brand.BrandResponse;
 import com.nguyenkhang.mobile_store.service.BrandService;
 

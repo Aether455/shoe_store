@@ -12,8 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nguyenkhang.mobile_store.dto.request.CustomerCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.CustomerUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.customer.CustomerCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.customer.CustomerUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponseForUser;
 import com.nguyenkhang.mobile_store.entity.Address;

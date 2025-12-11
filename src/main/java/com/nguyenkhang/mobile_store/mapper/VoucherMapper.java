@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import com.nguyenkhang.mobile_store.dto.request.VoucherRequest;
+import com.nguyenkhang.mobile_store.dto.request.voucher.VoucherRequest;
 import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponse;
 import com.nguyenkhang.mobile_store.dto.response.vouchers.VoucherResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.Voucher;

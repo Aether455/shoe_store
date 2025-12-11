@@ -8,8 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import com.nguyenkhang.mobile_store.dto.request.SupplierRequest;
-import com.nguyenkhang.mobile_store.dto.response.SupplierResponse;
+import com.nguyenkhang.mobile_store.dto.request.supplier.SupplierRequest;
+import com.nguyenkhang.mobile_store.dto.response.supplier.SupplierResponse;
 import com.nguyenkhang.mobile_store.entity.User;
 import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;

@@ -1,7 +1,5 @@
 package com.nguyenkhang.mobile_store.service;
 
-import jakarta.persistence.EntityManager;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nguyenkhang.mobile_store.dto.Coordinates;
-import com.nguyenkhang.mobile_store.dto.request.WarehouseRequest;
-import com.nguyenkhang.mobile_store.dto.response.WarehouseResponse;
+import com.nguyenkhang.mobile_store.dto.request.warehouse.WarehouseRequest;
+import com.nguyenkhang.mobile_store.dto.response.warehouse.WarehouseResponse;
 import com.nguyenkhang.mobile_store.entity.User;
 import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;
@@ -39,8 +37,6 @@ public class WarehouseService {
 
     UserService userService;
     GeocodingService geocodingService;
-
-    EntityManager entityManager;
 
     @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")

@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 
-import com.nguyenkhang.mobile_store.dto.request.IntrospectRequest;
+import com.nguyenkhang.mobile_store.dto.request.auth.IntrospectRequest;
 import com.nguyenkhang.mobile_store.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 

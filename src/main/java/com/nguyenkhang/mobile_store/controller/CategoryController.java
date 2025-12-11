@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.CategoryCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.CategoryUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.category.CategoryCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.category.CategoryUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponse;
 import com.nguyenkhang.mobile_store.service.CategoryService;
 

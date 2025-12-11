@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.CustomerCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.CustomerUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.customer.CustomerCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.customer.CustomerUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponse;
 import com.nguyenkhang.mobile_store.dto.response.customer.CustomerResponseForUser;
 import com.nguyenkhang.mobile_store.service.CustomerService;

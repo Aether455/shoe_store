@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.InventoryCriteria;
-import com.nguyenkhang.mobile_store.dto.response.InventoryResponse;
+import com.nguyenkhang.mobile_store.dto.request.inventory.InventoryCriteria;
+import com.nguyenkhang.mobile_store.dto.response.inventory.InventoryResponse;
 import com.nguyenkhang.mobile_store.service.InventoryService;
 
 import lombok.AccessLevel;

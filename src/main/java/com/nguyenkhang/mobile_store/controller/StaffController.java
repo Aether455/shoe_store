@@ -4,9 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.StaffRequest;
-import com.nguyenkhang.mobile_store.dto.request.StaffUpdateRequest;
-import com.nguyenkhang.mobile_store.dto.response.StaffResponse;
+import com.nguyenkhang.mobile_store.dto.request.staff.StaffRequest;
+import com.nguyenkhang.mobile_store.dto.request.staff.StaffUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.response.staff.StaffResponse;
 import com.nguyenkhang.mobile_store.service.StaffService;
 
 import lombok.AccessLevel;

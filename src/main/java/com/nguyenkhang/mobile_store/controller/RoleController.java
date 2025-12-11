@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.RoleRequest;
-import com.nguyenkhang.mobile_store.dto.response.RoleResponse;
+import com.nguyenkhang.mobile_store.dto.response.auth.RoleResponse;
 import com.nguyenkhang.mobile_store.service.RoleService;
 
 import lombok.AccessLevel;

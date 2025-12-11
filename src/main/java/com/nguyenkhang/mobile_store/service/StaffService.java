@@ -6,9 +6,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nguyenkhang.mobile_store.dto.request.StaffRequest;
-import com.nguyenkhang.mobile_store.dto.request.StaffUpdateRequest;
-import com.nguyenkhang.mobile_store.dto.response.StaffResponse;
+import com.nguyenkhang.mobile_store.dto.request.staff.StaffRequest;
+import com.nguyenkhang.mobile_store.dto.request.staff.StaffUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.response.staff.StaffResponse;
 import com.nguyenkhang.mobile_store.entity.Staff;
 import com.nguyenkhang.mobile_store.entity.User;
 import com.nguyenkhang.mobile_store.exception.AppException;

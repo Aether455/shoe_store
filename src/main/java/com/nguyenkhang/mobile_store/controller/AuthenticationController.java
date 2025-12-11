@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nguyenkhang.mobile_store.annotations.ApiCommonResponses;
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.AuthenticationRequest;
-import com.nguyenkhang.mobile_store.dto.request.LogoutRequest;
-import com.nguyenkhang.mobile_store.dto.request.RefreshRequest;
-import com.nguyenkhang.mobile_store.dto.response.AuthenticationResponse;
+import com.nguyenkhang.mobile_store.dto.request.auth.AuthenticationRequest;
+import com.nguyenkhang.mobile_store.dto.request.auth.LogoutRequest;
+import com.nguyenkhang.mobile_store.dto.request.auth.RefreshRequest;
+import com.nguyenkhang.mobile_store.dto.response.auth.AuthenticationResponse;
 import com.nguyenkhang.mobile_store.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 

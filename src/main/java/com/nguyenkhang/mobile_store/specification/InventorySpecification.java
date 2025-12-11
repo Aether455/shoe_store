@@ -10,7 +10,7 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
-import com.nguyenkhang.mobile_store.dto.request.InventoryCriteria;
+import com.nguyenkhang.mobile_store.dto.request.inventory.InventoryCriteria;
 import com.nguyenkhang.mobile_store.entity.*;
 
 public class InventorySpecification {

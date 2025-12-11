@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.nguyenkhang.mobile_store.dto.request.RoleRequest;
-import com.nguyenkhang.mobile_store.dto.response.RoleResponse;
+import com.nguyenkhang.mobile_store.dto.response.auth.RoleResponse;
 import com.nguyenkhang.mobile_store.entity.Role;
 
 @Mapper(componentModel = "spring")

@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.nguyenkhang.mobile_store.dto.request.DailyReportCriteria;
-import com.nguyenkhang.mobile_store.dto.response.DailyReportResponse;
+import com.nguyenkhang.mobile_store.dto.response.statistic.DailyReportResponse;
 import com.nguyenkhang.mobile_store.entity.DailyReport;
 import com.nguyenkhang.mobile_store.entity.Order;
 import com.nguyenkhang.mobile_store.entity.OrderItem;

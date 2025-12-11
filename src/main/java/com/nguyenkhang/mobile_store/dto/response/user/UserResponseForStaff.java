@@ -2,7 +2,7 @@ package com.nguyenkhang.mobile_store.dto.response.user;
 
 import java.time.LocalDate;
 
-import com.nguyenkhang.mobile_store.dto.response.StaffResponse;
+import com.nguyenkhang.mobile_store.dto.response.staff.StaffResponse;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

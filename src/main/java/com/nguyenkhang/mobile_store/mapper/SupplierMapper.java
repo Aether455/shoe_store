@@ -3,8 +3,8 @@ package com.nguyenkhang.mobile_store.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-import com.nguyenkhang.mobile_store.dto.request.SupplierRequest;
-import com.nguyenkhang.mobile_store.dto.response.SupplierResponse;
+import com.nguyenkhang.mobile_store.dto.request.supplier.SupplierRequest;
+import com.nguyenkhang.mobile_store.dto.response.supplier.SupplierResponse;
 import com.nguyenkhang.mobile_store.entity.Supplier;
 
 @Mapper(componentModel = "spring")

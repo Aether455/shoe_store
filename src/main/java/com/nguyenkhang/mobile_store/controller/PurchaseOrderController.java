@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.PurchaseOrderRequest;
-import com.nguyenkhang.mobile_store.dto.response.SimplePurchaseOrderResponse;
+import com.nguyenkhang.mobile_store.dto.request.purchase_order.PurchaseOrderRequest;
+import com.nguyenkhang.mobile_store.dto.response.purchase_order.SimplePurchaseOrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.purchase_order.PurchaseOrderReportResponse;
 import com.nguyenkhang.mobile_store.dto.response.purchase_order.PurchaseOrderResponse;
 import com.nguyenkhang.mobile_store.service.PurchaseOrderService;

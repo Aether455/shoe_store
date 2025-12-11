@@ -7,8 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import com.nguyenkhang.mobile_store.dto.request.InventoryCriteria;
-import com.nguyenkhang.mobile_store.dto.response.InventoryResponse;
+import com.nguyenkhang.mobile_store.dto.request.inventory.InventoryCriteria;
+import com.nguyenkhang.mobile_store.dto.response.inventory.InventoryResponse;
 import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;
 import com.nguyenkhang.mobile_store.mapper.InventoryMapper;

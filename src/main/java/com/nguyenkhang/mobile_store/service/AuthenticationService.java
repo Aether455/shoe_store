@@ -15,12 +15,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.nguyenkhang.mobile_store.dto.request.AuthenticationRequest;
-import com.nguyenkhang.mobile_store.dto.request.IntrospectRequest;
-import com.nguyenkhang.mobile_store.dto.request.LogoutRequest;
-import com.nguyenkhang.mobile_store.dto.request.RefreshRequest;
-import com.nguyenkhang.mobile_store.dto.response.AuthenticationResponse;
-import com.nguyenkhang.mobile_store.dto.response.IntrospectResponse;
+import com.nguyenkhang.mobile_store.dto.request.auth.AuthenticationRequest;
+import com.nguyenkhang.mobile_store.dto.request.auth.IntrospectRequest;
+import com.nguyenkhang.mobile_store.dto.request.auth.LogoutRequest;
+import com.nguyenkhang.mobile_store.dto.request.auth.RefreshRequest;
+import com.nguyenkhang.mobile_store.dto.response.auth.AuthenticationResponse;
+import com.nguyenkhang.mobile_store.dto.response.auth.IntrospectResponse;
 import com.nguyenkhang.mobile_store.entity.InvalidatedToken;
 import com.nguyenkhang.mobile_store.entity.User;
 import com.nguyenkhang.mobile_store.exception.AppException;

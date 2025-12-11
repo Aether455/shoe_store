@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.nguyenkhang.mobile_store.dto.request.RoleRequest;
-import com.nguyenkhang.mobile_store.dto.response.RoleResponse;
+import com.nguyenkhang.mobile_store.dto.response.auth.RoleResponse;
 import com.nguyenkhang.mobile_store.entity.Role;
 import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;

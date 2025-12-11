@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import com.nguyenkhang.mobile_store.dto.request.CategoryCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.CategoryUpdateRequest;
+import com.nguyenkhang.mobile_store.dto.request.category.CategoryCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.category.CategoryUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponse;
 import com.nguyenkhang.mobile_store.dto.response.category.CategoryResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.Category;

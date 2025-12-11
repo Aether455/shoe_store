@@ -5,8 +5,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
-import com.nguyenkhang.mobile_store.dto.request.CartItemRequest;
-import com.nguyenkhang.mobile_store.dto.request.CartItemUpdateQuantityRequest;
+import com.nguyenkhang.mobile_store.dto.request.cart.CartItemRequest;
+import com.nguyenkhang.mobile_store.dto.request.cart.CartItemUpdateQuantityRequest;
 import com.nguyenkhang.mobile_store.dto.response.cart.CartItemResponse;
 import com.nguyenkhang.mobile_store.dto.response.cart.CartResponse;
 import com.nguyenkhang.mobile_store.service.CartService;

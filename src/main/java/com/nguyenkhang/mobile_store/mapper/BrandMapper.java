@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import com.nguyenkhang.mobile_store.dto.request.BrandRequest;
+import com.nguyenkhang.mobile_store.dto.request.brand.BrandRequest;
 import com.nguyenkhang.mobile_store.dto.response.brand.BrandResponse;
 import com.nguyenkhang.mobile_store.dto.response.brand.BrandResponseForCustomer;
 import com.nguyenkhang.mobile_store.entity.Brand;

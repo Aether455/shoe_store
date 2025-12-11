@@ -11,7 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import com.nguyenkhang.mobile_store.dto.response.RevenueReportResponse;
+import com.nguyenkhang.mobile_store.dto.response.statistic.RevenueReportResponse;
 import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.statistic.BrandRevenueResponse;
 import com.nguyenkhang.mobile_store.dto.response.statistic.CategoryRevenueResponse;

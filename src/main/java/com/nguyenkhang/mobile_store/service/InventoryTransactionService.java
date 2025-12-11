@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import com.nguyenkhang.mobile_store.dto.response.InventoryTransactionResponse;
+import com.nguyenkhang.mobile_store.dto.response.inventory.InventoryTransactionResponse;
 import com.nguyenkhang.mobile_store.exception.AppException;
 import com.nguyenkhang.mobile_store.exception.ErrorCode;
 import com.nguyenkhang.mobile_store.mapper.InventoryTransactionMapper;

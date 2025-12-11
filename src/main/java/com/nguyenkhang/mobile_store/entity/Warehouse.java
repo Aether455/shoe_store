@@ -32,9 +32,6 @@ public class Warehouse {
     @Column(columnDefinition = "TEXT")
     String description;
 
-    @Column(nullable = false, unique = true)
-    int priority;
-
     @Column(nullable = false, length = 60)
     String province;
 
