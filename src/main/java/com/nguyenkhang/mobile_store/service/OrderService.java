@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nguyenkhang.mobile_store.dto.Coordinates;
-import com.nguyenkhang.mobile_store.dto.request.order.OrderCreationRequest;
-import com.nguyenkhang.mobile_store.dto.request.order.OrderItemRequest;
-import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateRequest;
-import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateStatusRequest;
+import com.nguyenkhang.mobile_store.dto.request.order.*;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponse;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponseForCustomer;
 import com.nguyenkhang.mobile_store.dto.response.order.SimpleOrderResponse;
@@ -387,10 +384,10 @@ public class OrderService {
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
-    public Page<SimpleOrderResponse> searchOrders(String keyword, int page, int size) {
+    public Page<SimpleOrderResponse> searchOrders(OrderCriteria criteria, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return orderRepository
-                .findAll(OrderSpecification.createSpecification(keyword), pageable)
+                .findAll(OrderSpecification.createSpecification(criteria), pageable)
                 .map(orderMapper::toSimpleOrderResponse);
     }
 

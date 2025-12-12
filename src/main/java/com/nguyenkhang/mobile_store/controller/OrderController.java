@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.nguyenkhang.mobile_store.dto.ApiResponseDTO;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderCreationRequest;
+import com.nguyenkhang.mobile_store.dto.request.order.OrderCriteria;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateRequest;
 import com.nguyenkhang.mobile_store.dto.request.order.OrderUpdateStatusRequest;
 import com.nguyenkhang.mobile_store.dto.response.order.OrderResponse;
@@ -66,10 +67,10 @@ public class OrderController {
     @GetMapping("/search")
     public ApiResponseDTO<Page<SimpleOrderResponse>> searchOrders(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam String keyword,
+            OrderCriteria criteria,
             @RequestParam(defaultValue = "10") int size) {
         return ApiResponseDTO.<Page<SimpleOrderResponse>>builder()
-                .result(orderService.searchOrders(keyword, page, size))
+                .result(orderService.searchOrders(criteria, page, size))
                 .build();
     }
 }
