@@ -1,0 +1,121 @@
+package com.nguyenkhang.shoe_store.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.nguyenkhang.shoe_store.dto.request.cart.CartItemRequest;
+import com.nguyenkhang.shoe_store.dto.request.cart.CartItemUpdateQuantityRequest;
+import com.nguyenkhang.shoe_store.dto.response.cart.CartItemResponse;
+import com.nguyenkhang.shoe_store.dto.response.cart.CartResponse;
+import com.nguyenkhang.shoe_store.entity.*;
+import com.nguyenkhang.shoe_store.exception.AppException;
+import com.nguyenkhang.shoe_store.exception.ErrorCode;
+import com.nguyenkhang.shoe_store.mapper.CartMapper;
+import com.nguyenkhang.shoe_store.repository.*;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class CartService {
+    CartRepository cartRepository;
+    CartItemRepository cartItemRepository;
+    ProductRepository productRepository;
+    ProductVariantRepository productVariantRepository;
+    UserRepository userRepository;
+    CartMapper cartMapper;
+
+    UserService userService;
+
+    public CartItemResponse addToCart(CartItemRequest cartItemRequest) {
+
+        User user = userService.getCurrentUser();
+
+        var cart = cartRepository
+                .findByUserId(user.getId())
+                .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
+
+        Product product = productRepository
+                .findById(cartItemRequest.getProductId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        ProductVariant productVariant = productVariantRepository
+                .findById(cartItemRequest.getProductVariantId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
+
+        var cartItemExisting = cartItemRepository.findByCartIdAndProductVariantId(cart.getId(), productVariant.getId());
+
+        CartItem cartItem;
+
+        if (cartItemExisting.isPresent()) {
+            cartItem = cartItemExisting.get();
+            cartItem.setQuantity(cartItemExisting.get().getQuantity() + cartItemRequest.getQuantity());
+        } else {
+            cartItem = CartItem.builder()
+                    .cart(cart)
+                    .productVariant(productVariant)
+                    .product(product)
+                    .quantity(cartItemRequest.getQuantity())
+                    .build();
+        }
+
+        cartItem = cartItemRepository.save(cartItem);
+
+        return cartMapper.toCartItemResponse(cartItem);
+    }
+
+    public CartResponse getMyCart() {
+
+        User user = userService.getCurrentUser();
+
+        var cart = cartRepository
+                .findByUserId(user.getId())
+                .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
+
+        var cartResponse = cartMapper.toCartResponse(cart);
+        var totalAmount = cartResponse.getCartItems().stream()
+                .mapToDouble(CartItemResponse::getTotalPrice)
+                .sum();
+        cartResponse.setTotalAmount(totalAmount);
+        return cartResponse;
+    }
+
+    public CartItemResponse updateQuantity(CartItemUpdateQuantityRequest request) {
+        User user = userService.getCurrentUser();
+
+        var cart = cartRepository
+                .findByUserId(user.getId())
+                .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
+
+        var cartItem = cartItemRepository
+                .findByCartIdAndProductVariantId(cart.getId(), request.getProductVariantId())
+                .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_EXIST));
+
+        cartItem.setQuantity(request.getQuantity());
+
+        cartItem = cartItemRepository.save(cartItem);
+
+        return cartMapper.toCartItemResponse(cartItem);
+    }
+
+    public void deleteCartItem(long cartItemId) {
+        cartItemRepository.deleteById(cartItemId);
+    }
+
+    @Transactional
+    public void clearMyCart() {
+        try {
+            User user = userService.getCurrentUser();
+
+            var cart = cartRepository
+                    .findByUserId(user.getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXIST));
+
+            cartItemRepository.deleteAllByCartId(cart.getId());
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CART_CLEAR_ERROR);
+        }
+    }
+}

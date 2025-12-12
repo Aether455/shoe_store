@@ -1,0 +1,20 @@
+package com.nguyenkhang.shoe_store.dto.response.warehouse;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class SimpleWarehouseResponse {
+
+    Long id;
+
+    String name;
+    String address;
+
+    String description;
+}

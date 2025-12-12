@@ -1,0 +1,29 @@
+package com.nguyenkhang.shoe_store.mapper;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+import com.nguyenkhang.shoe_store.dto.request.category.CategoryCreationRequest;
+import com.nguyenkhang.shoe_store.dto.request.category.CategoryUpdateRequest;
+import com.nguyenkhang.shoe_store.dto.response.category.CategoryResponse;
+import com.nguyenkhang.shoe_store.dto.response.category.CategoryResponseForCustomer;
+import com.nguyenkhang.shoe_store.entity.Category;
+
+@Mapper(componentModel = "spring")
+public interface CategoryMapper {
+
+    @Mapping(target = "createAt", ignore = true)
+    @Mapping(target = "updateAt", ignore = true)
+    Category toCategory(CategoryCreationRequest request);
+
+    CategoryResponse toCategoryResponse(Category category);
+
+    CategoryResponseForCustomer toCategoryResponseForCustomer(Category category);
+
+    @Mapping(target = "createAt", ignore = true)
+    @Mapping(target = "updateAt", ignore = true)
+    @Mapping(target = "createBy", ignore = true)
+    @Mapping(target = "updateBy", ignore = true)
+    void updateCategory(@MappingTarget Category category, CategoryUpdateRequest request);
+}

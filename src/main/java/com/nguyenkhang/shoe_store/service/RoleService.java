@@ -1,0 +1,46 @@
+package com.nguyenkhang.shoe_store.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.nguyenkhang.shoe_store.dto.request.RoleRequest;
+import com.nguyenkhang.shoe_store.dto.response.auth.RoleResponse;
+import com.nguyenkhang.shoe_store.entity.Role;
+import com.nguyenkhang.shoe_store.exception.AppException;
+import com.nguyenkhang.shoe_store.exception.ErrorCode;
+import com.nguyenkhang.shoe_store.mapper.RoleMapper;
+import com.nguyenkhang.shoe_store.repository.RoleRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class RoleService {
+    RoleMapper roleMapper;
+    RoleRepository roleRepository;
+
+    public RoleResponse createRole(RoleRequest request) {
+
+        if (roleRepository.existsById(request.getName())) {
+            throw new AppException(ErrorCode.ROLE_EXISTED);
+        }
+
+        Role role = roleMapper.toRole(request);
+
+        role = roleRepository.save(role);
+
+        return roleMapper.toRoleResponse(role);
+    }
+
+    public List<RoleResponse> getAll() {
+        return roleRepository.findAll().stream().map(roleMapper::toRoleResponse).toList();
+    }
+
+    public void delete(String role) {
+        roleRepository.deleteById(role);
+    }
+}

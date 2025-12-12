@@ -1,0 +1,40 @@
+package com.nguyenkhang.shoe_store.dto.request.staff;
+
+import java.time.LocalDateTime;
+
+import jakarta.validation.constraints.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class StaffRequest {
+
+    @NotBlank(message = "USER_NOT_BLANK")
+    Long userId;
+
+    @NotBlank(message = "PHONE_NUMBER_REQUIRED")
+    @Pattern(regexp = "^(0|\\+84)(\\d{9})$", message = "INVALID_PHONE_NUMBER")
+    String phoneNumber;
+
+    @NotBlank(message = "FULL_NAME_REQUIRED")
+    String fullName;
+
+    @NotBlank(message = "GENDER_REQUIRED")
+    String gender;
+
+    @NotNull(message = "POSITION_NOT_EMPTY")
+    String position;
+
+    @NotNull(message = "HIRE_DATE_NOT_BLANK")
+    @PastOrPresent(message = "HIRE_DATE_INVALID")
+    LocalDateTime hireDate;
+
+    @Positive(message = "SALARY_INVALID")
+    double salary;
+}

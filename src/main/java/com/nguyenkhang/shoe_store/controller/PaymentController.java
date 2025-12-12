@@ -1,0 +1,31 @@
+package com.nguyenkhang.shoe_store.controller;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
+import com.nguyenkhang.shoe_store.dto.ApiResponseDTO;
+import com.nguyenkhang.shoe_store.dto.request.order.PaymentUpdateRequest;
+import com.nguyenkhang.shoe_store.dto.response.payment.PaymentResponse;
+import com.nguyenkhang.shoe_store.service.PaymentService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@RestController
+@RequestMapping("/payments")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class PaymentController {
+
+    PaymentService paymentService;
+
+    @PutMapping("/{id}")
+    public ApiResponseDTO<PaymentResponse> updateStatus(
+            @PathVariable long id, @RequestBody @Valid PaymentUpdateRequest request) {
+        return ApiResponseDTO.<PaymentResponse>builder()
+                .result(paymentService.updatePaymentStatus(id, request))
+                .build();
+    }
+}

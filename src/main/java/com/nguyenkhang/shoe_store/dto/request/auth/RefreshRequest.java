@@ -1,0 +1,15 @@
+package com.nguyenkhang.shoe_store.dto.request.auth;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class RefreshRequest {
+    @Schema(description = "Chuỗi JWT Token dùng để refresh", example = "eyJhbGciOiJIUzI1NiJ9...")
+    String token;
+}
