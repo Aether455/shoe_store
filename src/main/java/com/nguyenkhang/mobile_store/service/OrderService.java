@@ -216,6 +216,9 @@ public class OrderService {
 
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
         User user = userService.getCurrentUser();
+        if (order.getStatus() == OrderStatus.CONFIRMED) {
+            throw new AppException(ErrorCode.DUPLICATE_ORDER_STATUS);
+        }
 
         if (!order.getStatus().name().equals(OrderStatus.PENDING.name())) {
             throw new AppException(ErrorCode.ORDER_CONFIRM_STATUS_INVALID);
@@ -333,7 +336,9 @@ public class OrderService {
     public OrderResponse cancelOrder(long id) {
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
         User user = userService.getCurrentUser();
-
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new AppException(ErrorCode.DUPLICATE_ORDER_STATUS);
+        }
         if (!order.getStatus().name().equals(OrderStatus.PENDING.name())) {
             throw new AppException(ErrorCode.ORDER_CANCEL_STATUS_INVALID);
         }
@@ -353,7 +358,34 @@ public class OrderService {
 
         return orderMapper.toOrderResponse(order);
     }
+    @Transactional
+    public OrderResponse completeOrder(long id) {
+        var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
+        User user = userService.getCurrentUser();
 
+        if (order.getStatus() == OrderStatus.COMPLETED) {
+            throw new AppException(ErrorCode.DUPLICATE_ORDER_STATUS);
+        }
+
+        if (!order.getStatus().name().equals(OrderStatus.DELIVERED.name())) {
+            throw new AppException(ErrorCode.ORDER_COMPLETED_STATUS_INVALID);
+        }
+
+        order.setUpdateBy(user);
+        order.setStatus(OrderStatus.COMPLETED);
+        OrderStatusHistory history = OrderStatusHistory.builder()
+                .order(order)
+                .oldStatus(order.getStatus().name())
+                .newStatus(OrderStatus.COMPLETED.name())
+                .changeBy(user)
+                .build();
+
+        order = orderRepository.save(order);
+
+        orderStatusHistoryRepository.save(history);
+
+        return orderMapper.toOrderResponse(order);
+    }
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public Page<SimpleOrderResponse> getOrders(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
@@ -398,15 +430,10 @@ public class OrderService {
 
         User user = userService.getCurrentUser();
 
-        if (order.getStatus().name().equals(OrderStatus.CANCELLED.name())) {
-            throw new AppException(ErrorCode.ORDER_ALREADY_CANCELED);
-        }
-        if (order.getStatus().name().equals(OrderStatus.COMPLETED.name())) {
-            throw new AppException(ErrorCode.ORDER_ALREADY_COMPLETED);
-        }
-        if (order.getStatus().equals(request.getOrderStatus())) {
-            throw new AppException(ErrorCode.DUPLICATE_ORDER_STATUS);
-        }
+        var currentStatus = order.getStatus();
+        var newStatus = request.getOrderStatus();
+
+        validateOrderStatusTransition(currentStatus, newStatus);
 
         OrderStatusHistory history = OrderStatusHistory.builder()
                 .order(order)
@@ -420,8 +447,7 @@ public class OrderService {
         List<Inventory> inventoriesToUpdate = new ArrayList<>();
         List<ProductVariant> variantToUpdate = new ArrayList<>();
         List<InventoryTransaction> inventoryTransactionsToCreate = new ArrayList<>();
-        if (request.getOrderStatus().name().equals(OrderStatus.CANCELLED.name())
-                && !order.getStatus().name().equals(OrderStatus.PENDING.name())) {
+        if (newStatus == OrderStatus.CANCELLED && currentStatus != OrderStatus.PENDING) {
             Set<Long> variantIds = order.getOrderItems().stream()
                     .map((item) -> item.getProductVariant().getId())
                     .collect(Collectors.toSet());
@@ -466,7 +492,7 @@ public class OrderService {
                 inventoryTransactionsToCreate.add(inventoryTransaction);
             }
         }
-        if (request.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
+        if (newStatus == OrderStatus.CONFIRMED) {
             List<Warehouse> sortedWarehouses = warehouseRepository.findAllSortedByDistance(
                     order.getDeliveryLatitude(), order.getDeliveryLongitude());
             log.info("Sort Warehouse is: {}", sortedWarehouses);
@@ -563,7 +589,7 @@ public class OrderService {
             // ko có kho phù hợp -> ném lỗi
             throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
         }
-        order.setStatus(request.getOrderStatus());
+        order.setStatus(newStatus);
         try {
             order = orderRepository.save(order);
             if (!inventoriesToUpdate.isEmpty()) {
@@ -589,12 +615,26 @@ public class OrderService {
 
         var order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
 
-        if (!order.getStatus().name().equals(OrderStatus.DELIVERING.name())) {
+        if (order.getStatus() != OrderStatus.PENDING) {
             throw new AppException(ErrorCode.ORDER_CHANGE_INFO_STATUS_INVALID);
         }
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        try {
+
+            Coordinates coordinates =
+                    geocodingService.getCoordinates(request.getWard(), request.getDistrict(), request.getProvince());
+
+            if (coordinates == null) {
+                throw new AppException(ErrorCode.ADDRESS_NOT_FOUND);
+            }
+            order.setDeliveryLatitude(coordinates.getLatitude());
+            order.setDeliveryLongitude(coordinates.getLongitude());
+        } catch (Exception e) {
+            log.error("Error in create order for admin", e);
+            throw e;
+        }
         orderMapper.updateOrder(order, request);
         order.setUpdateBy(user);
 
@@ -650,6 +690,34 @@ public class OrderService {
 
             order.setReducedAmount(reducedAmount);
             order.setFinalAmount(totalAmount - reducedAmount);
+        }
+    }
+
+    void validateOrderStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
+        if (currentStatus == newStatus) {
+            throw new AppException(ErrorCode.DUPLICATE_ORDER_STATUS);
+        }
+        if (currentStatus.equals(OrderStatus.CANCELLED)) {
+            throw new AppException(ErrorCode.ORDER_ALREADY_CANCELED);
+        }
+        if (currentStatus.equals(OrderStatus.COMPLETED)) {
+            throw new AppException(ErrorCode.ORDER_ALREADY_COMPLETED);
+        }
+        if (newStatus.equals(OrderStatus.CANCELLED)) {
+            return;
+        }
+
+        boolean isValid;
+        switch (currentStatus) {
+            case PENDING -> isValid = (newStatus == OrderStatus.CONFIRMED);
+            case CONFIRMED -> isValid = (newStatus == OrderStatus.DELIVERING);
+            case DELIVERING -> isValid = (newStatus == OrderStatus.DELIVERED);
+            case DELIVERED -> isValid = (newStatus == OrderStatus.COMPLETED);
+            default -> isValid = false;
+        }
+
+        if (!isValid) {
+            throw new AppException(ErrorCode.INVALID_STATUS_TRANSITION);
         }
     }
 }

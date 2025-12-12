@@ -58,7 +58,12 @@ public class UserOrderController {
                 .result(orderService.cancelOrder(id))
                 .build();
     }
-
+    @PatchMapping("/{id}/complete")
+    public ApiResponseDTO<OrderResponse> completeOrder(@PathVariable long id) {
+        return ApiResponseDTO.<OrderResponse>builder()
+                .result(orderService.completeOrder(id))
+                .build();
+    }
     @GetMapping("/me")
     public ApiResponseDTO<Page<SimpleOrderResponseForCustomer>> getMyOrders(
             @RequestParam(defaultValue = "0") int page,

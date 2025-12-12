@@ -26,8 +26,8 @@ public class OrderSpecification {
                         criteriaBuilder.lessThanOrEqualTo(root.get("finalAmount"), criteria.getMaxFinalAmount()));
             }
 
-            if(criteria.getStatus() !=null){
-                predicates.add(criteriaBuilder.equal(root.get("status"),criteria.getStatus()));
+            if (criteria.getStatus() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), criteria.getStatus()));
             }
 
             if (criteria.getCreateAtBegin() != null) {
