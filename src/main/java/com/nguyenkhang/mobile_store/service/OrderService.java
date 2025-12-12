@@ -401,8 +401,8 @@ public class OrderService {
         if (order.getStatus().name().equals(OrderStatus.CANCELLED.name())) {
             throw new AppException(ErrorCode.ORDER_ALREADY_CANCELED);
         }
-        if (order.getStatus().name().equals(OrderStatus.CONFIRMED.name())) {
-            throw new AppException(ErrorCode.ORDER_ALREADY_CONFIRMED);
+        if (order.getStatus().name().equals(OrderStatus.COMPLETED.name())) {
+            throw new AppException(ErrorCode.ORDER_ALREADY_COMPLETED);
         }
         if (order.getStatus().equals(request.getOrderStatus())) {
             throw new AppException(ErrorCode.DUPLICATE_ORDER_STATUS);

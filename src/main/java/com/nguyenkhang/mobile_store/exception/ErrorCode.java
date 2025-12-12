@@ -148,7 +148,7 @@ public enum ErrorCode {
 
     ORDER_COORDINATES_MISSING(4110, "Thiếu tọa độ giao hàng!", HttpStatus.BAD_REQUEST),
     RECEIVER_NAME_REQUIRED(4111, "Tên người nhận là bắt buộc!", HttpStatus.BAD_REQUEST),
-    ORDER_ALREADY_CONFIRMED(4108, "Đơn hàng đã hoàn thành. Không thể cập nhật!", HttpStatus.BAD_REQUEST),
+    ORDER_ALREADY_COMPLETED(4108, "Đơn hàng đã hoàn thành. Không thể cập nhật!", HttpStatus.BAD_REQUEST),
 
 
     // Payment
